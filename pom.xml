@@ -1,0 +1,190 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>com.github.qqxadyy</groupId>
+		<artifactId>pjq-parent</artifactId>
+		<version>1.0.0-SNAPSHOT</version>
+	</parent>
+
+	<artifactId>pjq-commons-utils</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
+	<name>pjq-commons-utils</name>
+	<description>pjq-commons-utils</description>
+	<inceptionYear>2021</inceptionYear>
+	<url>https://github.com/qqxadyy/pjq-commons-utils</url>
+	<licenses>
+		<license>
+			<name>MIT License</name>
+			<url>http://www.opensource.org/licenses/mit-license.php</url>
+		</license>
+	</licenses>
+	<developers>
+		<developer>
+			<name>pengjianqiang</name>
+		</developer>
+	</developers>
+	<scm>
+		<connection>scm:git:https://github.com/qqxadyy/pjq-commons-utils.git</connection>
+		<developerConnection>scm:git:https://github.com/qqxadyy/pjq-commons-utils.git</developerConnection>
+		<url>https://github.com/qqxadyy/pjq-commons-utils</url>
+		<tag>HEAD</tag>
+	</scm>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<java.version>1.8</java.version>
+		<skipTests>true</skipTests>
+	</properties>
+
+	<dependencies>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>com.mycila</groupId>
+				<artifactId>license-maven-plugin</artifactId>
+				<configuration>
+					<licenseSets>
+						<licenseSet>
+							<multi>
+								<header>licenseHeaders/MY_LICENSE_HEADER</header>
+								<separator>======================================================================</separator>
+								<header>com/mycila/maven/plugin/license/templates/MIT.txt</header>
+							</multi>
+							<excludes>
+								<exclude>**/pom.xml</exclude>
+								<exclude>**/README</exclude>
+								<exclude>README.md</exclude>
+								<exclude>LICENSE</exclude>
+								<exclude>licenseHeaders/**</exclude>
+								<exclude>src/test/java/**</exclude>
+								<exclude>src/test/resources/**</exclude>
+								<exclude>src/main/resources/**</exclude>
+							</excludes>
+						</licenseSet>
+					</licenseSets>
+					<properties>
+						<owner>pengjianqiang</owner>
+					</properties>
+					<strictCheck>true</strictCheck> <!--严格检查 -->
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>check</goal> <!-- 检查某些源文件中是否缺少头信息 -->
+							<goal>remove</goal> <!-- 删除现有的头信息 -->
+							<goal>format</goal> <!-- 如果缺少则头信息 -->
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>${java.version}</source>
+					<target>${java.version}</target>
+					<compilerArgs>
+						<arg>-parameters</arg>
+					</compilerArgs>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+			</plugin>
+
+			<!-- maven-source-plugin和maven-javadoc-plugin的写法主要以sonatype官网的为主再修改，另外增加去掉doclint检查 -->
+			<plugin>
+				<!-- 打源码包 -->
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar-no-fork</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>attach-javadocs</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<encoding>${project.build.sourceEncoding}</encoding>
+					<aggregate>true</aggregate>
+					<charset>${project.build.sourceEncoding}</charset>
+					<docencoding>${project.build.sourceEncoding}</docencoding>
+					<!-- 禁用java8 的DocLint新特性，以确保当javadoc有编译错误时，也能正常生成javadoc jar包(取消对源码中的doc参数注释等检查) -->
+					<doclint>none</doclint>
+					<additionalparam>-Xdoclint:none</additionalparam>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<!-- 自动进行gpg验证 -->
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-gpg-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>sign-artifacts</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>sign</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<!-- 自动提交到sonatype审批发布 -->
+				<groupId>org.sonatype.plugins</groupId>
+				<artifactId>nexus-staging-maven-plugin</artifactId>
+				<extensions>true</extensions>
+				<configuration>
+					<serverId>sonatype-nexus</serverId> <!-- 和settings.xml里面的server配置一致，还有distributionManagement也是 -->
+					<nexusUrl>https://oss.sonatype.org/</nexusUrl>
+					<autoReleaseAfterClose>true</autoReleaseAfterClose>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-release-plugin</artifactId>
+				<configuration>
+					<autoVersionSubmodules>true</autoVersionSubmodules>
+					<useReleaseProfile>false</useReleaseProfile>
+					<releaseProfiles>release</releaseProfiles>
+					<goals>deploy</goals>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+	<distributionManagement>
+		<!-- <snapshotRepository> <id>sonatype-nexus</id> <url>https://oss.sonatype.org/content/repositories/snapshots</url> </snapshotRepository> 
+			<repository> <id>sonatype-nexus</id> <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url> </repository> -->
+
+		<snapshotRepository>
+			<id>gz-trs-nexus</id>
+			<url>http://maven.gztrs.cn:8081/repository/maven-snapshots/</url>
+		</snapshotRepository>
+		<repository>
+			<id>gz-trs-nexus</id>
+			<url>http://maven.gztrs.cn:8081/repository/maven-relases/</url>
+		</repository>
+	</distributionManagement>
+</project>
