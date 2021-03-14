@@ -53,6 +53,16 @@ public final class CommonEnumConstant {
     }
 
     /**
+     * 是或否类型--<br>
+     * NO--0：否<br>
+     * YES--1：是
+     */
+    @AllArgsConstructor
+    public static enum YesOrNoInt implements EnhanceEnum {
+        NO, YES;
+    }
+
+    /**
      * 状态类型--<br>
      * INVALID--0：无效<br>
      * VALID--1：有效
