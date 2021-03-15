@@ -217,12 +217,15 @@ public interface EnhanceEnum {
          * @param enumType
          * @param valueOrName
          * @return
-         * @throws Exception
          * @creator pengjianqiang@2021年3月10日
          */
-        public static <T extends Enum<T>> boolean isEnumOf(Class<T> enumType, String valueOrName) throws Exception {
-            T eunmObj = valueOrNameOf(enumType, valueOrName);
-            return CheckUtils.isNotNull(eunmObj);
+        public static <T extends Enum<T>> boolean isEnumOf(Class<T> enumType, String valueOrName) {
+            try {
+                T eunmObj = valueOrNameOf(enumType, valueOrName);
+                return CheckUtils.isNotNull(eunmObj);
+            } catch (Exception e) {
+                return false;
+            }
         }
     }
 }
