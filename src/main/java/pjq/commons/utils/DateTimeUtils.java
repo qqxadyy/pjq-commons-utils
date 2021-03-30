@@ -553,7 +553,7 @@ public final class DateTimeUtils {
     }
 
     /**
-     * 获取两个时间相差的秒数
+     * 获取两个日期相差的秒数
      * 
      * @param d1
      * @param d2
@@ -564,7 +564,7 @@ public final class DateTimeUtils {
     }
 
     /**
-     * 获取两个日期相差的秒数
+     * 获取两个时间相差的秒数
      * 
      * @param d1
      * @param d2
