@@ -106,18 +106,30 @@ public final class CollectionUtils {
     }
 
     public static <T> void forEach(T[] array, Consumer<T> action) {
+        if (CheckUtils.isEmpty(array)) {
+            return;
+        }
         forEach(Arrays.stream(array), action);
     }
 
     public static <T> void forEach(T[] array, IndexConsumer<T, Integer> action) {
+        if (CheckUtils.isEmpty(array)) {
+            return;
+        }
         forEach(Arrays.stream(array), action);
     }
 
     public static <T> void forEach(Stream<T> stream, Consumer<T> action) {
+        if (CheckUtils.isNull(stream)) {
+            return;
+        }
         forEach(stream.collect(Collectors.toList()), action);
     }
 
     public static <T> void forEach(Stream<T> stream, IndexConsumer<T, Integer> action) {
+        if (CheckUtils.isNull(stream)) {
+            return;
+        }
         forEach(stream.collect(Collectors.toList()), action);
     }
 
