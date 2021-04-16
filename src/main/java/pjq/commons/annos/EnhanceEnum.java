@@ -73,6 +73,13 @@ public interface EnhanceEnum {
          * @return
          */
         String descField() default "desc";
+
+        /**
+         * 获取枚举分组的属性名，默认为group
+         * 
+         * @return
+         */
+        String groupField() default "group";
     }
 
     /**
@@ -86,24 +93,24 @@ public interface EnhanceEnum {
         Class<?> thisClass = getClass();
         CheckUtils.checkNotFalse(thisClass.isEnum(), "只有枚举类才能实现" + EnhanceEnum.class.getSimpleName() + "接口");
 
-        String enumValue = null;
+        String targetValue = null;
         try {
             // 如果枚举类有对应属性，则使用该属性值作为枚举的值
             EnhanceEnumFieldDefine anno = thisClass.getAnnotation(EnhanceEnumFieldDefine.class);
-            String valueFieldName = CheckUtils.isNotNull(anno) ? anno.valueField() : "value";
-            Field valueField = thisClass.getDeclaredField(valueFieldName);
-            valueField.setAccessible(true);
-            if (CheckUtils.isNotNull(valueField)) {
-                enumValue = String.valueOf(valueField.get(this));
+            String targetFieldName = CheckUtils.isNotNull(anno) ? anno.valueField() : "value";
+            Field targetField = thisClass.getDeclaredField(targetFieldName);
+            targetField.setAccessible(true);
+            if (CheckUtils.isNotNull(targetField)) {
+                targetValue = String.valueOf(targetField.get(this));
             }
         } catch (Exception e) {
         }
 
-        if (CheckUtils.isEmpty(enumValue)) {
+        if (CheckUtils.isEmpty(targetValue)) {
             // 没有value属性或获取属性值失败，则用ordinal方法
-            enumValue = String.valueOf(((Enum<?>)this).ordinal());
+            targetValue = String.valueOf(((Enum<?>)this).ordinal());
         }
-        return enumValue;
+        return targetValue;
     }
 
     /**
@@ -130,24 +137,50 @@ public interface EnhanceEnum {
         Class<?> thisClass = getClass();
         CheckUtils.checkNotFalse(thisClass.isEnum(), "只有枚举类才能实现" + EnhanceEnum.class.getSimpleName() + "接口");
 
-        String enumDesc = null;
+        String targetValue = null;
         try {
             // 如果枚举类有对应属性，则使用该属性值作为枚举的描述
             EnhanceEnumFieldDefine anno = thisClass.getAnnotation(EnhanceEnumFieldDefine.class);
-            String descFieldName = CheckUtils.isNotNull(anno) ? anno.descField() : "desc";
-            Field descField = thisClass.getDeclaredField(descFieldName);
-            descField.setAccessible(true);
-            if (CheckUtils.isNotNull(descField)) {
-                enumDesc = String.valueOf(descField.get(this));
+            String targetFieldName = CheckUtils.isNotNull(anno) ? anno.descField() : "desc";
+            Field targetField = thisClass.getDeclaredField(targetFieldName);
+            targetField.setAccessible(true);
+            if (CheckUtils.isNotNull(targetField)) {
+                targetValue = String.valueOf(targetField.get(this));
             }
         } catch (Exception e) {
         }
 
-        if (CheckUtils.isEmpty(enumDesc)) {
+        if (CheckUtils.isEmpty(targetValue)) {
             // 没有desc属性或获取属性值失败，则用name方法
-            enumDesc = String.valueOf(((Enum<?>)this).name());
+            targetValue = String.valueOf(((Enum<?>)this).name());
         }
-        return enumDesc;
+        return targetValue;
+    }
+
+    /**
+     * 1.如果枚举类有group属性，则group属性值作为枚举分组<br>
+     * 2.否则返回null<br>
+     * 3.或枚举类重写group方法，用其返回值作为枚举分组
+     * 
+     * @return
+     */
+    default String group() {
+        Class<?> thisClass = getClass();
+        CheckUtils.checkNotFalse(thisClass.isEnum(), "只有枚举类才能实现" + EnhanceEnum.class.getSimpleName() + "接口");
+
+        String targetValue = null;
+        try {
+            // 如果枚举类有对应属性，则使用该属性值作为枚举的分组
+            EnhanceEnumFieldDefine anno = thisClass.getAnnotation(EnhanceEnumFieldDefine.class);
+            String targetFieldName = CheckUtils.isNotNull(anno) ? anno.groupField() : "group";
+            Field targetField = thisClass.getDeclaredField(targetFieldName);
+            targetField.setAccessible(true);
+            if (CheckUtils.isNotNull(targetField)) {
+                targetValue = String.valueOf(targetField.get(this));
+            }
+        } catch (Exception e) {
+        }
+        return targetValue;
     }
 
     /**
