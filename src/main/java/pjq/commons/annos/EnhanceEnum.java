@@ -43,8 +43,8 @@ import pjq.commons.utils.CheckUtils;
 
 /**
  * <p>
- * 用于给自定义的枚举类增加value、desc方法<br>
- * 可以用{@link EnhanceEnumFieldDefine}指定获取value、desc值的属性名
+ * 用于给自定义的枚举类增加value、desc、group方法<br>
+ * 可以用{@link EnhanceEnumFieldDefine}指定获取value、desc、group值的属性名
  * <p>
  * Create at 2018年11月17日
  * 
@@ -62,34 +62,61 @@ public interface EnhanceEnum {
     public @interface EnhanceEnumFieldDefine {
         /**
          * 获取枚举值的属性名，默认为value
-         * 
-         * @return
          */
         String valueField() default "value";
 
         /**
+         * 使用枚举名作为枚举值，值不为{@link EnumNameAsValueType#DISABLE}时优先于{@link #valueField()}生效
+         */
+        EnumNameAsValueType nameAsValue() default EnumNameAsValueType.DISABLE;
+
+        /**
          * 获取枚举描述的属性名，默认为desc
-         * 
-         * @return
          */
         String descField() default "desc";
 
         /**
          * 获取枚举分组的属性名，默认为group
-         * 
-         * @return
          */
         String groupField() default "group";
     }
 
     /**
-     * 1.如果枚举类有value属性，则value属性值作为枚举值<br>
-     * 2.否则使用ordinal值作为枚举值<br>
+     * 枚举名作为value值时的取值方式
+     * 
+     * @author pengjianqiang
+     * @date 2021年4月17日
+     */
+    public enum EnumNameAsValueType {
+        /**
+         * 没有配置
+         */
+        DISABLE,
+
+        /**
+         * 默认，枚举名作为value值
+         */
+        DEFAULT,
+
+        /**
+         * 小写枚举名作为value值
+         */
+        LOWER_CASE,
+
+        /**
+         * 大写枚举名作为value值
+         */
+        UPPER_CASE;
+    }
+
+    /**
+     * 1.如果有使用{@link EnhanceEnumFieldDefine}注解，则按该注解的配置获取枚举值 2.否则使用ordinal值作为枚举值<br>
      * 3.或枚举类重写value方法，用其返回值作为枚举值
      * 
      * @return
      */
     default String value() {
+        Enum<?> thisEnum = ((Enum<?>)this);
         Class<?> thisClass = getClass();
         CheckUtils.checkNotFalse(thisClass.isEnum(), "只有枚举类才能实现" + EnhanceEnum.class.getSimpleName() + "接口");
 
@@ -97,24 +124,41 @@ public interface EnhanceEnum {
         try {
             // 如果枚举类有对应属性，则使用该属性值作为枚举的值
             EnhanceEnumFieldDefine anno = thisClass.getAnnotation(EnhanceEnumFieldDefine.class);
-            String targetFieldName = CheckUtils.isNotNull(anno) ? anno.valueField() : "value";
-            Field targetField = thisClass.getDeclaredField(targetFieldName);
-            targetField.setAccessible(true);
-            if (CheckUtils.isNotNull(targetField)) {
-                targetValue = String.valueOf(targetField.get(this));
+            EnumNameAsValueType nameAsValueType =
+                CheckUtils.isNotNull(anno) ? anno.nameAsValue() : EnumNameAsValueType.DISABLE;
+            if (EnumNameAsValueType.DISABLE.equals(nameAsValueType)) {
+                String targetFieldName = CheckUtils.isNotNull(anno) ? anno.valueField() : "value";
+                Field targetField = thisClass.getDeclaredField(targetFieldName);
+                targetField.setAccessible(true);
+                if (CheckUtils.isNotNull(targetField)) {
+                    targetValue = String.valueOf(targetField.get(this));
+                }
+            } else {
+                // 有配置nameAsValueType时优先生效
+                switch (nameAsValueType) {
+                    case LOWER_CASE:
+                        targetValue = thisEnum.name().toLowerCase();
+                        break;
+                    case UPPER_CASE:
+                        targetValue = thisEnum.name().toUpperCase();
+                        break;
+                    default:
+                        targetValue = thisEnum.name();
+                        break;
+                }
             }
         } catch (Exception e) {
         }
 
         if (CheckUtils.isEmpty(targetValue)) {
             // 没有value属性或获取属性值失败，则用ordinal方法
-            targetValue = String.valueOf(((Enum<?>)this).ordinal());
+            targetValue = String.valueOf(thisEnum.ordinal());
         }
         return targetValue;
     }
 
     /**
-     * 返回int类型的value值，value值不是int类型时返回-1
+     * 返回int类型的value值，value值不是int类型时返回{@link Integer#MIN_VALUE}
      * 
      * @return
      */
@@ -127,13 +171,14 @@ public interface EnhanceEnum {
     }
 
     /**
-     * 1.如果枚举类有desc属性，则desc属性值作为枚举描述<br>
+     * 1.如果有使用{@link EnhanceEnumFieldDefine}注解，则按该注解的配置枚举描述<br>
      * 2.否则使用name()作为枚举描述<br>
      * 3.或枚举类重写desc方法，用其返回值作为枚举描述
      * 
      * @return
      */
     default String desc() {
+        Enum<?> thisEnum = ((Enum<?>)this);
         Class<?> thisClass = getClass();
         CheckUtils.checkNotFalse(thisClass.isEnum(), "只有枚举类才能实现" + EnhanceEnum.class.getSimpleName() + "接口");
 
@@ -152,13 +197,13 @@ public interface EnhanceEnum {
 
         if (CheckUtils.isEmpty(targetValue)) {
             // 没有desc属性或获取属性值失败，则用name方法
-            targetValue = String.valueOf(((Enum<?>)this).name());
+            targetValue = String.valueOf(thisEnum.name());
         }
         return targetValue;
     }
 
     /**
-     * 1.如果枚举类有group属性，则group属性值作为枚举分组<br>
+     * 1.如果有使用{@link EnhanceEnumFieldDefine}注解，则按该注解的配置枚举分组<br>
      * 2.否则返回null<br>
      * 3.或枚举类重写group方法，用其返回值作为枚举分组
      * 

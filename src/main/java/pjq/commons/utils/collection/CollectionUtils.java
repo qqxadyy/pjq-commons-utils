@@ -166,7 +166,7 @@ public final class CollectionUtils {
                     }
                 }
                 if (CheckUtils.isNotEmpty(errMsg)) {
-                    log.warn("集合遍历出现".concat(e.getClass().getSimpleName()).concat("，原因如下===={}"), errMsg,
+                    log.warn("(一般可忽略)集合遍历出现".concat(e.getClass().getSimpleName()).concat("，原因如下===={}"), errMsg,
                         ExceptionUtils.getRootCause(e));
                 }
 

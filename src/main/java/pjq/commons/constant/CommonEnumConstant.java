@@ -35,6 +35,8 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import pjq.commons.annos.EnhanceEnum;
+import pjq.commons.annos.EnhanceEnum.EnhanceEnumFieldDefine;
+import pjq.commons.annos.EnhanceEnum.EnumNameAsValueType;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class CommonEnumConstant {
@@ -74,11 +76,8 @@ public final class CommonEnumConstant {
     /**
      * ture或false类型
      */
-    @AllArgsConstructor
+    @EnhanceEnumFieldDefine(nameAsValue = EnumNameAsValueType.LOWER_CASE)
     public static enum TrueOrFalse implements EnhanceEnum {
-        FALSE("false"), TRUE("true");
-
-        @SuppressWarnings("unused")
-        private String value;
+        FALSE, TRUE;
     }
 }
