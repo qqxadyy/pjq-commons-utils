@@ -361,6 +361,17 @@ public final class CollectionUtils {
     }
 
     /**
+     * 把源list根据mapper的处理转成目标list
+     * 
+     * @param srcList
+     * @param mapper
+     * @return
+     */
+    public static <T, S> List<T> transformList(List<S> srcList, Function<S, T> mapper) {
+        return srcList.stream().map(mapper).collect(Collectors.toList());
+    }
+
+    /**
      * <p>
      * 带数组索引的{@link Consumer}
      * <p>
@@ -395,16 +406,5 @@ public final class CollectionUtils {
         public Continue(Throwable cause) {
             super(cause);
         }
-    }
-
-    /**
-     * 把源list根据mapper的处理转成目标list
-     * 
-     * @param srcList
-     * @param mapper
-     * @return
-     */
-    public static <T, S> List<T> transformList(List<S> srcList, Function<S, T> mapper) {
-        return srcList.stream().map(mapper).collect(Collectors.toList());
     }
 }
