@@ -368,6 +368,9 @@ public final class CollectionUtils {
      * @return
      */
     public static <T, S> List<T> transformList(List<S> srcList, Function<S, T> mapper) {
+        if (CheckUtils.isEmpty(srcList)) {
+            return null;
+        }
         return srcList.stream().map(mapper).collect(Collectors.toList());
     }
 
