@@ -65,25 +65,33 @@ import pjq.commons.utils.CheckUtils;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class CollectionUtils {
     /**
-     * 遍历集合，可以在action方法中抛出{@link Break}或{@link Continue}异常进行控制<br/>
-     * 如果action里面本身有必须显式捕捉的异常，则可以在catch中根据情况抛出Break或Continue异常<br/>
+     * 遍历集合，可以在action方法中抛出{@link Break}或{@link Continue}异常进行控制<br>
+     * 如果action里面本身有必须显式捕捉的异常，则可以在catch中根据情况抛出Break或Continue异常<br>
      * 
+     * @param <T>
+     *            集合元素类型
      * @param iterable
+     *            集合
      * @param action
-     *            e->{}
+     *            遍历操作，<code>e->{}</code>
+     * @creator pengjianqiang@2021年4月20日
      */
     public static <T> void forEach(Iterable<T> iterable, Consumer<T> action) {
         forEachCommon(iterable, action);
     }
 
     /**
-     * 遍历集合，可以在action方法中抛出{@link Break}或{@link Continue}异常进行控制<br/>
-     * 如果action里面本身有必须显式捕捉的异常，则可以在catch中根据情况抛出Break或Continue异常<br/>
-     * 当iterable为非有序集合时，action的下标不一定符合预期，慎用
+     * 遍历集合，可以在action方法中抛出{@link Break}或{@link Continue}异常进行控制<br>
+     * 如果action里面本身有必须显式捕捉的异常，则可以在catch中根据情况抛出Break或Continue异常<br>
+     * 当集合非有序时，action的下标不一定符合预期，慎用
      * 
+     * @param <T>
+     *            集合元素类型
      * @param iterable
+     *            集合
      * @param action
-     *            (e,i)->{}
+     *            遍历操作，<code>(e,index)->{}</code>
+     * @creator pengjianqiang@2021年4月20日
      */
     public static <T> void forEach(Iterable<T> iterable, IndexConsumer<T, Integer> action) {
         forEachCommon(iterable, action);
@@ -94,12 +102,19 @@ public final class CollectionUtils {
     }
 
     /**
-     * 遍历map，可以在action方法中抛出{@link Break}或{@link Continue}异常进行控制<br/>
-     * 如果action里面本身有必须显式捕捉的异常，则可以在catch中根据情况抛出Break或Continue异常<br/>
-     * 当map为非有序map时，action的下标不一定符合预期，慎用
+     * 遍历map，可以在action方法中抛出{@link Break}或{@link Continue}异常进行控制<br>
+     * 如果action里面本身有必须显式捕捉的异常，则可以在catch中根据情况抛出Break或Continue异常<br>
+     * 当map非有序时，action的下标不一定符合预期，慎用
      * 
+     * @param <K>
+     *            map的key元素类型
+     * @param <V>
+     *            map的value元素类型
      * @param map
+     *            map集合
      * @param action
+     *            遍历操作，<code>(entry,index)->{}</code>
+     * @creator pengjianqiang@2021年4月20日
      */
     public static <K, V> void forEach(Map<K, V> map, IndexConsumer<Entry<K, V>, Integer> action) {
         forEachCommon(map.entrySet(), action);
@@ -135,7 +150,7 @@ public final class CollectionUtils {
 
     @SuppressWarnings("unchecked")
     private static <T> void forEachCommon(Iterable<T> iterable, Object actionObj) {
-        if (CheckUtils.isNull(iterable)) {
+        if (CheckUtils.isNull(iterable) || CheckUtils.isNull(actionObj)) {
             return;
         }
 
@@ -180,14 +195,18 @@ public final class CollectionUtils {
             }
         }
     }
-    
+
     /**
-     * 根据条件过滤iterable
+     * 根据条件过滤集合
      * 
+     * @param <T>
+     *            集合元素类型
      * @param iterable
+     *            集合
      * @param predicate
-     *            过滤条件，<code>t->{}</code>
-     * @return 过滤结果用List存储，没有符合条件则返回空list
+     *            过滤条件，<code>t->{}</code>，为空时相当于不过滤
+     * @return 过滤后的list，没有符合条件则返回空list
+     * @creator pengjianqiang@2021年4月20日
      */
     public static <T> List<T> filter(Iterable<T> iterable, Predicate<T> predicate) {
         if (CheckUtils.isNull(iterable)) {
@@ -199,10 +218,16 @@ public final class CollectionUtils {
     /**
      * 根据条件过滤map
      * 
+     * @param <K>
+     *            map的key元素类型
+     * @param <V>
+     *            map的value元素类型
      * @param map
+     *            map集合
      * @param predicate
-     *            过滤条件，<code>entry->{}</code>
-     * @return 没有符合条件则返回空map
+     *            过滤条件，<code>entry->{}</code>，为空时相当于不过滤
+     * @return 过滤后的map，没有符合条件则返回空map
+     * @creator pengjianqiang@2021年4月20日
      */
     public static <K, V> Map<K, V> filter(Map<K, V> map, Predicate<Entry<K, V>> predicate) {
         if (CheckUtils.isEmpty(map)) {
@@ -216,10 +241,14 @@ public final class CollectionUtils {
     /**
      * 根据条件过滤数组
      * 
+     * @param <T>
+     *            数组元素类型
      * @param array
+     *            数组
      * @param predicate
-     *            过滤条件，<code>t->{}</code>
-     * @return 没有符合条件则返回空数组(注：array==null时返回null)
+     *            过滤条件，<code>t->{}</code>，为空时相当于不过滤
+     * @return 过滤后的数组，没有符合条件则返回空数组(注：array==null时返回null)
+     * @creator pengjianqiang@2021年4月20日
      */
     @SuppressWarnings("unchecked")
     public static <T> T[] filter(T[] array, Predicate<? super T> predicate) {
@@ -234,55 +263,69 @@ public final class CollectionUtils {
     /**
      * Stream的filter不是结束操作，不开放给外部调用，避免外部获取没结束的Stream
      * 
+     * @param <T>
+     *            stream的元素类类型
      * @param stream
+     *            stream
      * @param predicate
+     *            过滤条件，<code>t->{}</code>，为空时相当于不过滤
      * @return
+     * @creator pengjianqiang@2021年4月20日
      */
     private static <T> Stream<T> filter(Stream<T> stream, Predicate<? super T> predicate) {
-        return stream.filter(predicate);
+        return CheckUtils.isNotNull(predicate) ? stream.filter(predicate) : stream;
     }
 
     /**
-     * 根据条件过滤iterable，并返回第一个符合条件的对象<br/>
-     * 当iterable为非有序iterable时，返回结果不一定符合预期，慎用
+     * 根据条件过滤集合，并返回第一个符合条件的对象<br>
+     * 当集合非有序时，返回结果不一定符合预期，慎用
      * 
+     * @param <T>
+     *            集合元素类型
      * @param iterable
+     *            集合
      * @param predicate
-     * @return 没有符合条件则返回null
+     *            过滤条件，<code>t->{}</code>
+     * @return 过滤后的第一个符合条件的对象，没有符合条件则返回null
+     * @creator pengjianqiang@2021年4月20日
      */
     public static <T> T filterOne(Iterable<T> iterable, Predicate<T> predicate) {
         return first(filter(iterable, predicate));
     }
 
     /**
-     * 根据条件过滤map，并返回第一个符合条件的对象<br/>
-     * 当map为非有序map时，返回结果不一定符合预期，慎用
+     * 根据条件过滤map，并返回第一个符合条件的对象<br>
+     * 当map非有序时，返回结果不一定符合预期，慎用
      * 
+     * @param <K>
+     *            map的key元素类型
+     * @param <V>
+     *            map的value元素类型
      * @param map
+     *            集合
      * @param predicate
-     * @return 没有符合条件则返回null
+     *            过滤条件，<code>t->{}</code>
+     * @return 过滤后的第一个符合条件的对象，没有符合条件则返回null
+     * @creator pengjianqiang@2021年4月20日
      */
     public static <K, V> Map<K, V> filterOne(Map<K, V> map, Predicate<Entry<K, V>> predicate) {
         return first(filter(map, predicate));
     }
 
-    /**
-     * 根据条件过滤数组，并返回第一个符合条件的对象
-     * 
-     * @param array
-     * @param predicate
-     * @return 没有符合条件则返回null
-     */
     public static <T> T filterOne(T[] array, Predicate<T> predicate) {
         return first(filter(array, predicate));
     }
 
     /**
-     * 获取集合的第一个对象<br/>
-     * 当集合为非有序集合时，返回结果不一定符合预期，慎用
+     * 获取集合的第一个对象<br>
+     * 当集合非有序时，返回结果不一定符合预期，慎用
      * 
+     * @param <T>
+     *            集合元素类型
      * @param iterable
-     * @return 集合为空则返回null
+     *            集合
+     * @return 集合的第一个对象，集合为空则返回null
+     * @creator pengjianqiang@2021年4月20日
      */
     public static <T> T first(Iterable<T> iterable) {
         if (CheckUtils.isNull(iterable)) {
@@ -296,11 +339,15 @@ public final class CollectionUtils {
     }
 
     /**
-     * 获取集合的最后一个对象<br/>
-     * 当集合为非有序集合时，返回结果不一定符合预期，慎用
+     * 获取集合的最后一个对象<br>
+     * 当集合非有序时，返回结果不一定符合预期，慎用
      * 
+     * @param <T>
+     *            集合元素类型
      * @param iterable
-     * @return 集合为空则返回null
+     *            集合
+     * @return 集合的最后一个对象，集合为空则返回null
+     * @creator pengjianqiang@2021年4月20日
      */
     public static <T> T last(Iterable<T> iterable) {
         if (CheckUtils.isNull(iterable)) {
@@ -315,11 +362,17 @@ public final class CollectionUtils {
     }
 
     /**
-     * 获取map的第一个元素<br/>
-     * 当map为非有序map时，返回结果不一定符合预期，慎用
+     * 获取map的第一个元素<br>
+     * 当map非有序时，返回结果不一定符合预期，慎用
      * 
-     * @param iterable
-     * @return 集合为空则返回null
+     * @param <K>
+     *            map的key元素类型
+     * @param <V>
+     *            map的value元素类型
+     * @param map
+     *            集合
+     * @return 集合的第一个对象，集合为空则返回null
+     * @creator pengjianqiang@2021年4月20日
      */
     public static <K, V> Map<K, V> first(Map<K, V> map) {
         if (CheckUtils.isEmpty(map)) {
@@ -332,11 +385,17 @@ public final class CollectionUtils {
     }
 
     /**
-     * 获取map的最后一个元素<br/>
-     * 当map为非有序map时，返回结果不一定符合预期，慎用
+     * 获取map的最后一个元素<br>
+     * 当map非有序时，返回结果不一定符合预期，慎用
      * 
-     * @param iterable
-     * @return 集合为空则返回null
+     * @param <K>
+     *            map的key元素类型
+     * @param <V>
+     *            map的value元素类型
+     * @param map
+     *            集合
+     * @return 集合的最后一个对象，集合为空则返回null
+     * @creator pengjianqiang@2021年4月20日
      */
     public static <K, V> Map<K, V> last(Map<K, V> map) {
         if (CheckUtils.isEmpty(map)) {
@@ -358,20 +417,6 @@ public final class CollectionUtils {
 
     public static <T> T last(T[] array) {
         return CheckUtils.isEmpty(array) ? null : array[array.length - 1];
-    }
-
-    /**
-     * 把源list根据mapper的处理转成目标list
-     * 
-     * @param srcList
-     * @param mapper
-     * @return
-     */
-    public static <T, S> List<T> transformList(List<S> srcList, Function<S, T> mapper) {
-        if (CheckUtils.isEmpty(srcList)) {
-            return null;
-        }
-        return srcList.stream().map(mapper).collect(Collectors.toList());
     }
 
     /**
@@ -409,5 +454,173 @@ public final class CollectionUtils {
         public Continue(Throwable cause) {
             super(cause);
         }
+    }
+
+    /**
+     * 根据mapper的处理转成目标list
+     * 
+     * @param <T>
+     *            目标list元素类型
+     * @param <S>
+     *            源集合元素类型
+     * @param iterable
+     *            源集合
+     * @param mapper
+     *            转换处理器，<code>e->{}</code>，为空时返回空list
+     * @return 目标list
+     * @creator pengjianqiang@2021年4月20日
+     */
+    public static <T, S> List<T> transformToList(Iterable<S> iterable, Function<S, T> mapper) {
+        List<S> list = IterableUtils.toList(iterable);
+        if (CheckUtils.isEmpty(list) || CheckUtils.isNull(mapper)) {
+            return new ArrayList<>();
+        }
+        return transformToList(list.stream(), mapper);
+    }
+
+    /**
+     * 根据mapper的处理转成目标list
+     * 
+     * @param <T>
+     *            目标list元素类型
+     * @param <K>
+     *            源map的key元素类型
+     * @param <V>
+     *            源map的value元素类型
+     * @param map
+     *            源map
+     * @param mapper
+     *            转换处理器，<code>entry->{}</code>，为空时返回空list
+     * @return 目标list
+     * @creator pengjianqiang@2021年4月20日
+     */
+    public static <T, K, V> List<T> transformToList(Map<K, V> map, Function<Entry<K, V>, T> mapper) {
+        if (CheckUtils.isEmpty(map) || CheckUtils.isNull(mapper)) {
+            return new ArrayList<>();
+        }
+        return transformToList(map.entrySet(), mapper);
+    }
+
+    /**
+     * 根据mapper的处理转成目标list
+     * 
+     * @param <T>
+     *            目标list元素类型
+     * @param <S>
+     *            源数组元素类型
+     * @param array
+     *            源数组
+     * @param mapper
+     *            转换处理器，<code>e->{}</code>，为空时返回空list
+     * @return 目标list
+     * @creator pengjianqiang@2021年4月20日
+     */
+    public static <T, S> List<T> transformToList(S[] array, Function<S, T> mapper) {
+        if (CheckUtils.isEmpty(array)) {
+            return new ArrayList<>();
+        }
+        return transformToList(Arrays.stream(array), mapper);
+    }
+
+    /**
+     * 根据mapper的处理转成目标list
+     * 
+     * @param <T>
+     *            目标list元素类型
+     * @param <S>
+     *            源stream元素类型
+     * @param stream
+     *            源stream
+     * @param mapper
+     *            转换处理器，<code>e->{}</code>，为空时返回空list
+     * @return 目标list
+     * @creator pengjianqiang@2021年4月20日
+     */
+    public static <T, S> List<T> transformToList(Stream<S> stream, Function<S, T> mapper) {
+        if (CheckUtils.isNull(stream) || CheckUtils.isNull(mapper)) {
+            return new ArrayList<>();
+        }
+        return stream.map(mapper).collect(Collectors.toList());
+    }
+
+    /**
+     * 根据mapper的处理转成目标map<br>
+     * 如果转换后有相同key，则后面的value值覆盖前面的
+     * 
+     * @param <S>
+     *            源集合元素类型
+     * @param <K>
+     *            目标map的key元素类型
+     * @param <V>
+     *            目标map的value元素类型
+     * @param iterable
+     *            源集合
+     * @param keyMapper
+     *            key转换处理器，<code>e->{}</code>，为空时返回空map
+     * @param valueMapper
+     *            value转换处理器，<code>e->{}</code>，为空时返回空map
+     * @return 目标map
+     * @creator pengjianqiang@2021年4月20日
+     */
+    public static <S, K, V> Map<K, V> transformToMap(Iterable<S> iterable, Function<S, K> keyMapper,
+        Function<S, V> valueMapper) {
+        List<S> list = IterableUtils.toList(iterable);
+        if (CheckUtils.isEmpty(list) || CheckUtils.isNull(keyMapper) || CheckUtils.isNull(valueMapper)) {
+            return new HashMap<>();
+        }
+        return transformToMap(list.stream(), keyMapper, valueMapper);
+    }
+
+    /**
+     * 根据mapper的处理转成目标map<br>
+     * 如果转换后有相同key，则后面的value值覆盖前面的
+     * 
+     * @param <S>
+     *            源数组元素类型
+     * @param <K>
+     *            目标map的key元素类型
+     * @param <V>
+     *            目标map的value元素类型
+     * @param array
+     *            源数组
+     * @param keyMapper
+     *            key转换处理器，<code>e->{}</code>，为空时返回空map
+     * @param valueMapper
+     *            value转换处理器，<code>e->{}</code>，为空时返回空map
+     * @return 目标map
+     * @creator pengjianqiang@2021年4月20日
+     */
+    public static <S, K, V> Map<K, V> transformToMap(S[] array, Function<S, K> keyMapper, Function<S, V> valueMapper) {
+        if (CheckUtils.isEmpty(array) || CheckUtils.isNull(keyMapper) || CheckUtils.isNull(valueMapper)) {
+            return new HashMap<>();
+        }
+        return transformToMap(Arrays.stream(array), keyMapper, valueMapper);
+    }
+
+    /**
+     * 根据mapper的处理转成目标map<br>
+     * 如果转换后有相同key，则后面的value值覆盖前面的
+     * 
+     * @param <S>
+     *            源stream元素类型
+     * @param <K>
+     *            目标map的key元素类型
+     * @param <V>
+     *            目标map的value元素类型
+     * @param stream
+     *            源stream
+     * @param keyMapper
+     *            key转换处理器，<code>e->{}</code>，为空时返回空map
+     * @param valueMapper
+     *            value转换处理器，<code>e->{}</code>，为空时返回空map
+     * @return 目标map
+     * @creator pengjianqiang@2021年4月20日
+     */
+    public static <S, K, V> Map<K, V> transformToMap(Stream<S> stream, Function<S, K> keyMapper,
+        Function<S, V> valueMapper) {
+        if (CheckUtils.isNull(stream) || CheckUtils.isNull(keyMapper) || CheckUtils.isNull(valueMapper)) {
+            return new HashMap<>();
+        }
+        return stream.collect(Collectors.toMap(keyMapper, valueMapper, (value1, value2) -> value2));
     }
 }

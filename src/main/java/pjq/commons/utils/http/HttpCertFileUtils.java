@@ -76,7 +76,7 @@ public class HttpCertFileUtils {
     }
 
     /**
-     * -获取PKCS12(.pfx文件)证书的alias
+     * 获取PKCS12(.pfx文件)证书的alias
      * 
      * @param cafilepath
      * @param capwd
@@ -88,7 +88,7 @@ public class HttpCertFileUtils {
     }
 
     /**
-     * -获取PKCS12(.pfx文件)证书的alias
+     * 获取PKCS12(.pfx文件)证书的alias
      * 
      * @param keyStore
      * @return
@@ -104,7 +104,7 @@ public class HttpCertFileUtils {
     }
 
     /**
-     * -获取PKCS12(.pfx文件)证书信息的对象
+     * 获取PKCS12(.pfx文件)证书信息的对象
      * 
      * @param cafilepath
      * @param capwd
@@ -118,7 +118,7 @@ public class HttpCertFileUtils {
     }
 
     /**
-     * -获取PKCS12(.pfx文件)证书信息的对象
+     * 获取PKCS12(.pfx文件)证书信息的对象
      * 
      * @param keyStore
      * @param alias
@@ -135,7 +135,7 @@ public class HttpCertFileUtils {
     }
 
     /**
-     * -获取PKCS12(.pfx文件)中的私钥信息
+     * 获取PKCS12(.pfx文件)中的私钥信息
      * 
      * @param cafilepath
      * @param capwd
@@ -149,7 +149,7 @@ public class HttpCertFileUtils {
     }
 
     /**
-     * -获取PKCS12(.pfx文件)中的公钥信息
+     * 获取PKCS12(.pfx文件)中的公钥信息
      * 
      * @param cafilepath
      * @return
@@ -160,7 +160,7 @@ public class HttpCertFileUtils {
     }
 
     /**
-     * -获取公钥cer文件中的公钥信息
+     * 获取公钥cer文件中的公钥信息
      * 
      * @param cafilepath
      * @return
