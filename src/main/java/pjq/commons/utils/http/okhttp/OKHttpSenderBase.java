@@ -215,7 +215,7 @@ public abstract class OKHttpSenderBase {
     }
 
     /**
-     * -请求不带参数的url(当然url后面可跟参数)
+     * 请求不带参数的url(当然url后面可跟参数)
      * 
      * @param url
      * @param responseCharset

@@ -239,11 +239,14 @@ public interface EnhanceEnum {
         /**
          * 根据枚举值/名查找枚举类型
          * 
+         * @param <T>
+         *            枚举类型
          * @param enumTypeName
          *            枚举类的名
          * @param valueOrName
          *            枚举类的值/名
-         * @return
+         * @return 枚举对象
+         * @creator pengjianqiang@2021年4月20日
          */
         @SuppressWarnings("unchecked")
         public static <T extends Enum<T>> T valueOrNameOf(String enumTypeName, String valueOrName) {
@@ -262,11 +265,14 @@ public interface EnhanceEnum {
         /**
          * 根据枚举值/名查找枚举类型
          * 
+         * @param <T>
+         *            枚举类型
          * @param enumType
          *            枚举类的class
          * @param valueOrName
          *            枚举类的值/名
-         * @return
+         * @return 枚举对象
+         * @creator pengjianqiang@2021年4月20日
          */
         public static <T extends Enum<T>> T valueOrNameOf(Class<T> enumType, String valueOrName) {
             CheckUtils.checkNotFalse(enumType.isEnum(), "只有枚举类才能实现" + EnhanceEnum.class.getSimpleName() + "接口");
@@ -292,10 +298,14 @@ public interface EnhanceEnum {
         /**
          * 判断枚举值是否属于枚举对象
          * 
+         * @param <T>
+         *            枚举类型
          * @param enumType
+         *            枚举类的class
          * @param valueOrName
-         * @return
-         * @creator pengjianqiang@2021年3月10日
+         *            枚举类的值/名
+         * @return true/false
+         * @creator pengjianqiang@2021年4月20日
          */
         public static <T extends Enum<T>> boolean isEnumOf(Class<T> enumType, String valueOrName) {
             try {
