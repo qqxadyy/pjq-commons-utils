@@ -460,12 +460,30 @@ public final class DateTimeUtils {
     }
 
     /**
+     * 获取当前日期,格式为yyyyMMdd的字符串
+     * 
+     * @return
+     */
+    public static String currentDateCompactStr() {
+        return format(LocalDate.now(), DateTimePattern.PATTERN_DATE_COMPACT);
+    }
+
+    /**
      * 获取当前时间,格式为yyyy-MM-dd HH:mm:ss的字符串
      * 
      * @return
      */
     public static String currentDateTimeStr() {
         return format(LocalDateTime.now(), DateTimePattern.PATTERN_DATETIME);
+    }
+
+    /**
+     * 获取当前时间,格式为yyyyMMddHHmmss的字符串
+     * 
+     * @return
+     */
+    public static String currentDateTimeCompactStr() {
+        return format(LocalDateTime.now(), DateTimePattern.PATTERN_DATETIME_COMPACT);
     }
 
     /**
