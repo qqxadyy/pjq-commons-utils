@@ -46,6 +46,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.collections4.IterableUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import lombok.AccessLevel;
@@ -575,6 +576,35 @@ public final class CollectionUtils {
      * 根据mapper的处理转成目标map<br>
      * 如果转换后有相同key，则后面的value值覆盖前面的
      * 
+     * @param <SK>
+     *            源map的key元素类型
+     * @param <SV>
+     *            源map的value元素类型
+     * @param <K>
+     *            目标map的key元素类型
+     * @param <V>
+     *            目标map的value元素类型
+     * @param map
+     *            源map
+     * @param keyMapper
+     *            key转换处理器，<code>e->{}</code>，为空时返回空map
+     * @param valueMapper
+     *            value转换处理器，<code>e->{}</code>，为空时返回空map
+     * @return 目标map
+     * @creator pengjianqiang@2021年5月11日
+     */
+    public static <SK, SV, K, V> Map<K, V> transformToMap(Map<SK, SV> map, Function<Entry<SK, SV>, K> keyMapper,
+        Function<Entry<SK, SV>, V> valueMapper) {
+        if (CheckUtils.isEmpty(map) || CheckUtils.isNull(keyMapper) || CheckUtils.isNull(valueMapper)) {
+            return new HashMap<>();
+        }
+        return transformToMap(map.entrySet(), keyMapper, valueMapper);
+    }
+
+    /**
+     * 根据mapper的处理转成目标map<br>
+     * 如果转换后有相同key，则后面的value值覆盖前面的
+     * 
      * @param <S>
      *            源数组元素类型
      * @param <K>
@@ -622,5 +652,19 @@ public final class CollectionUtils {
             return new HashMap<>();
         }
         return stream.collect(Collectors.toMap(keyMapper, valueMapper, (value1, value2) -> value2));
+    }
+
+    /**
+     * 查找对象在数组中的下标
+     * 
+     * @param array
+     *            数组
+     * @param objectToFind
+     *            目标对象
+     * @return 下标值，找不到时返回-1
+     * @creator pengjianqiang@2021年4月27日
+     */
+    public static int indexOf(Object[] array, Object objectToFind) {
+        return ArrayUtils.indexOf(array, objectToFind);
     }
 }
