@@ -5,10 +5,11 @@
 	<parent>
 		<groupId>com.github.qqxadyy</groupId>
 		<artifactId>pjq-parent</artifactId>
-		<version>1.2.0-SNAPSHOT</version>
+		<version>1.2.1</version>
 	</parent>
 
 	<artifactId>pjq-commons-utils</artifactId>
+	<version>1.2.1-SNAPSHOT</version>
 	<name>pjq-commons-utils</name>
 	<description>pjq-commons-utils</description>
 	<inceptionYear>2021</inceptionYear>
@@ -25,8 +26,8 @@
 		</developer>
 	</developers>
 	<scm>
-		<connection>scm:git:https://github.com/qqxadyy/pjq-commons-utils.git</connection>
-		<developerConnection>scm:git:https://github.com/qqxadyy/pjq-commons-utils.git</developerConnection>
+		<connection>scm:git:https://gitee.com/qqxadyy/pjq-commons-utils.git</connection>
+		<developerConnection>scm:git:https://gitee.com/qqxadyy/pjq-commons-utils.git</developerConnection>
 		<url>https://github.com/qqxadyy/pjq-commons-utils</url>
 		<tag>HEAD</tag>
 	</scm>
