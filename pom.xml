@@ -1,5 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
@@ -9,7 +8,7 @@
 	</parent>
 
 	<artifactId>pjq-commons-utils</artifactId>
-	<version>1.2.1-SNAPSHOT</version>
+	<version>1.2.1</version>
 	<name>pjq-commons-utils</name>
 	<description>pjq-commons-utils</description>
 	<inceptionYear>2021</inceptionYear>
@@ -29,7 +28,7 @@
 		<connection>scm:git:https://gitee.com/qqxadyy/pjq-commons-utils.git</connection>
 		<developerConnection>scm:git:https://gitee.com/qqxadyy/pjq-commons-utils.git</developerConnection>
 		<url>https://github.com/qqxadyy/pjq-commons-utils</url>
-		<tag>HEAD</tag>
+		<tag>pjq-commons-utils-1.2.1</tag>
 	</scm>
 
 	<properties>
