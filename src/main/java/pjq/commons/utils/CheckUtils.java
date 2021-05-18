@@ -53,7 +53,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class CheckUtils {
     public static boolean isEmpty(String s) {
-        return StringUtils.isBlank(s) || "null".equalsIgnoreCase(s.trim()) || "undefined".equalsIgnoreCase(s.trim());
+        String invisibleChar = "\u200b|\u200B"; // 该字符串是不可见的，控制台等打印不出，但是有实际长度
+        String ns = null == s ? null : new String(s).trim().replaceAll(invisibleChar, "");
+        return StringUtils.isBlank(ns) || "null".equalsIgnoreCase(ns) || "undefined".equalsIgnoreCase(ns);
     }
 
     public static boolean isNotEmpty(String s) {
