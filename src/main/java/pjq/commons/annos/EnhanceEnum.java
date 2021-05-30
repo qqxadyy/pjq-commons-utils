@@ -235,7 +235,7 @@ public interface EnhanceEnum {
      * @date 2021年2月7日
      */
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
-    final class DefualtEnhanceEnum implements EnhanceEnum {
+    final class DefaultEnhanceEnum implements EnhanceEnum {
         /**
          * 根据枚举值/名查找枚举类型
          * 
