@@ -257,7 +257,6 @@ public interface EnhanceEnum {
             try {
                 return valueOrNameOf((Class<T>)Class.forName(enumTypeName), valueOrName);
             } catch (Exception e) {
-                e.printStackTrace();
                 return null;
             }
         }
