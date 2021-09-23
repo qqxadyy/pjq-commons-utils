@@ -274,7 +274,7 @@ public interface EnhanceEnum {
          * @creator pengjianqiang@2021年4月20日
          */
         public static <T extends Enum<T>> T valueOrNameOf(Class<T> enumType, String valueOrName) {
-            if (CheckUtils.isNull(enumType) || CheckUtils.isNotEmpty(valueOrName)) {
+            if (CheckUtils.isNull(enumType) || CheckUtils.isEmpty(valueOrName)) {
                 return null;
             }
             CheckUtils.checkNotFalse(enumType.isEnum(), "只有枚举类才能实现" + EnhanceEnum.class.getSimpleName() + "接口");
