@@ -132,35 +132,35 @@ public final class CommonTypeJudger {
             || isObjectType(classType);
     }
 
-    public static boolean isCollectionType(Class<?> classType) throws Exception {
+    public static boolean isCollectionType(Class<?> classType) {
         return Collection.class.isAssignableFrom(classType) || isMapType(classType) || isArrayType(classType);
     }
 
-    public static boolean isListType(Class<?> classType) throws Exception {
+    public static boolean isListType(Class<?> classType) {
         return List.class.isAssignableFrom(classType);
     }
 
-    public static boolean isLinkedListType(Class<?> classType) throws Exception {
+    public static boolean isLinkedListType(Class<?> classType) {
         return LinkedList.class.equals(classType);
     }
 
-    public static boolean isSetType(Class<?> classType) throws Exception {
+    public static boolean isSetType(Class<?> classType) {
         return Set.class.isAssignableFrom(classType);
     }
 
-    public static boolean isLinkedHashSetType(Class<?> classType) throws Exception {
+    public static boolean isLinkedHashSetType(Class<?> classType) {
         return LinkedHashSet.class.equals(classType);
     }
 
-    public static boolean isMapType(Class<?> classType) throws Exception {
+    public static boolean isMapType(Class<?> classType) {
         return Map.class.isAssignableFrom(classType);
     }
 
-    public static boolean isLinkedHashMapType(Class<?> classType) throws Exception {
+    public static boolean isLinkedHashMapType(Class<?> classType) {
         return LinkedHashMap.class.equals(classType);
     }
 
-    public static boolean isArrayType(Class<?> classType) throws Exception {
+    public static boolean isArrayType(Class<?> classType) {
         return classType.isArray();
     }
 }
