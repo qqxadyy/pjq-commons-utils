@@ -38,7 +38,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.MonthDay;
-import java.time.Period;
 import java.time.Year;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
@@ -553,9 +552,9 @@ public final class DateTimeUtils {
      */
     public static int durationDays(LocalDate d1, LocalDate d2) {
         if (d1.isAfter(d2)) {
-            return Period.between(d2, d1).getDays();
+            return new Long(ChronoUnit.DAYS.between(d2, d1)).intValue();
         } else {
-            return Period.between(d1, d2).getDays();
+            return new Long(ChronoUnit.DAYS.between(d1, d2)).intValue();
         }
     }
 
