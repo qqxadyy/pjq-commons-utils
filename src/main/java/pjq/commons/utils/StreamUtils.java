@@ -38,12 +38,10 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 /**
- * <p>
  * Stream工具类
- * <p>
- * Create at 2019年1月15日
- * 
+ *
  * @author pengjianqiang
+ * @date 2019年1月15日
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class StreamUtils {

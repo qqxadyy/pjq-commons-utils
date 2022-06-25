@@ -43,12 +43,10 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 /**
- * <p>
  * 字符串、集合的判断工具类
- * <p>
- * Create at 2019年1月15日
- * 
+ *
  * @author pengjianqiang
+ * @date 2019年1月15日
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class CheckUtils {

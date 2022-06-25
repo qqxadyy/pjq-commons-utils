@@ -48,12 +48,10 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 /**
- * <p>
  * 常见类型判断类
- * <p>
- * Create at 2018年11月19日
- * 
+ *
  * @author pengjianqiang
+ * @date 2018年11月19日
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class CommonTypeJudger {

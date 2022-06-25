@@ -47,7 +47,7 @@ public final class CommonEnumConstant {
      * YES--Y：是
      */
     @AllArgsConstructor
-    public static enum YesOrNo implements EnhanceEnum {
+    public enum YesOrNo implements EnhanceEnum {
         NO("N"), YES("Y");
 
         @SuppressWarnings("unused")
@@ -60,7 +60,7 @@ public final class CommonEnumConstant {
      * YES--1：是
      */
     @AllArgsConstructor
-    public static enum YesOrNoInt implements EnhanceEnum {
+    public enum YesOrNoInt implements EnhanceEnum {
         NO, YES;
     }
 
@@ -69,7 +69,7 @@ public final class CommonEnumConstant {
      * INVALID--0：无效<br>
      * VALID--1：有效
      */
-    public static enum StatusType implements EnhanceEnum {
+    public enum StatusType implements EnhanceEnum {
         INVALID, VALID
     }
 
@@ -77,7 +77,7 @@ public final class CommonEnumConstant {
      * ture或false类型
      */
     @EnhanceEnumFieldDefine(nameAsValue = EnumNameAsValueType.LOWER_CASE)
-    public static enum TrueOrFalse implements EnhanceEnum {
+    public enum TrueOrFalse implements EnhanceEnum {
         FALSE, TRUE;
     }
 }

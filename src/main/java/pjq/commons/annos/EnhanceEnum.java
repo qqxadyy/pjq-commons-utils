@@ -42,13 +42,11 @@ import lombok.NoArgsConstructor;
 import pjq.commons.utils.CheckUtils;
 
 /**
- * <p>
  * 用于给自定义的枚举类增加value、desc、group方法<br>
  * 可以用{@link EnhanceEnumFieldDefine}指定获取value、desc、group值的属性名
- * <p>
- * Create at 2018年11月17日
- * 
+ *
  * @author pengjianqiang
+ * @date 2018年11月17日
  */
 public interface EnhanceEnum {
     /**
@@ -59,7 +57,7 @@ public interface EnhanceEnum {
      */
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.TYPE)
-    public @interface EnhanceEnumFieldDefine {
+    @interface EnhanceEnumFieldDefine {
         /**
          * 获取枚举值的属性名，默认为value
          */
@@ -87,7 +85,7 @@ public interface EnhanceEnum {
      * @author pengjianqiang
      * @date 2021年4月17日
      */
-    public enum EnumNameAsValueType {
+    enum EnumNameAsValueType {
         /**
          * 没有配置
          */
@@ -110,7 +108,8 @@ public interface EnhanceEnum {
     }
 
     /**
-     * 1.如果有使用{@link EnhanceEnumFieldDefine}注解，则按该注解的配置获取枚举值 2.否则使用ordinal值作为枚举值<br>
+     * 1.如果有使用{@link EnhanceEnumFieldDefine}注解，则按该注解的配置获取枚举值<br>
+     * 2.否则使用ordinal值作为枚举值<br>
      * 3.或枚举类重写value方法，用其返回值作为枚举值
      * 
      * @return

@@ -53,12 +53,10 @@ import pjq.commons.constant.DateTimePattern;
 import pjq.commons.utils.reflect.MethodUtils;
 
 /**
- * <p>
  * 使用java.time实现的日期时间工具类
- * <p>
- * Create at 2018年11月15日
- * 
+ *
  * @author pengjianqiang
+ * @date 2018年11月15日
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class DateTimeUtils {
@@ -551,6 +549,9 @@ public final class DateTimeUtils {
      * @return
      */
     public static int durationDays(LocalDate d1, LocalDate d2) {
+        //问题：Period.getDays只能获取相差的时间中的天数部分，但是相差的年份、月份获取不了，即getDays不是获取相差总天数，实际应用以下方式：
+        //方法1：Duration.between(LocaleDateTime d1,LocaleDateTime d2).getSeconds/toDays等
+        //方法2：ChronoUnit.SECONDS/DAYS等.between(LocaleDateTime d1,LocaleDateTime d2)
         if (d1.isAfter(d2)) {
             return new Long(ChronoUnit.DAYS.between(d2, d1)).intValue();
         } else {

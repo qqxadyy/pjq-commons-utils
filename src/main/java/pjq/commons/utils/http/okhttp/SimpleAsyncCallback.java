@@ -49,5 +49,5 @@ public interface SimpleAsyncCallback {
      * @param responseStr
      *            返回报文
      */
-    public void onResponse(boolean isSuccess, int statusCode, String responseStr);
+    void onResponse(boolean isSuccess, int statusCode, String responseStr);
 }
