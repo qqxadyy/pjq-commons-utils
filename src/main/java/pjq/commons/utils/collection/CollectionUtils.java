@@ -55,12 +55,10 @@ import lombok.extern.slf4j.Slf4j;
 import pjq.commons.utils.CheckUtils;
 
 /**
- * <p>
  * 集合、map、数组工具类
- * <p>
- * Create at 2019年1月17日
- * 
+ *
  * @author pengjianqiang
+ * @date 2019年1月17日
  */
 @Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)

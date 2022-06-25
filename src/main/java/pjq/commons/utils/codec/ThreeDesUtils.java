@@ -42,12 +42,10 @@ import javax.crypto.spec.SecretKeySpec;
 import org.apache.commons.codec.binary.Base64;
 
 /**
- * <p>
- * -3Des加解密工具类
- * <p>
- * Create at 2019年1月15日
- * 
+ * 3Des加解密工具类
+ *
  * @author pengjianqiang
+ * @date 2019年1月15日
  */
 public final class ThreeDesUtils {
     private ThreeDesUtils() {}
@@ -56,7 +54,7 @@ public final class ThreeDesUtils {
     private static final String DEFAULT_CIPHER_ALGORITHM = "DESede/ECB/PKCS5Padding";// 默认的加密算法
 
     /**
-     * DESede 加密操作
+     * 3Des加密操作
      *
      * @param content
      *            待加密内容
@@ -80,7 +78,7 @@ public final class ThreeDesUtils {
     }
 
     /**
-     * DESede 解密操作
+     * 3Des解密操作
      *
      * @param content
      * @param key

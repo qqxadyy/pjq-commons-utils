@@ -41,12 +41,10 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 /**
- * <p>
  * {@link Method}工具类<br/>
- * <p>
- * Create at 2018年12月17日
- * 
+ *
  * @author pengjianqiang
+ * @date 2018年12月17日
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class MethodUtils {
@@ -81,12 +79,7 @@ public final class MethodUtils {
     public static Object invokeStaticOrDefault(Class<?> clazz, Method method, Object... args) throws Throwable {
         if (method.isDefault()) {
             // 默认方法不能直接method.invoke
-            InvocationHandler handler = new InvocationHandler() {
-                @Override
-                public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-                    return null; // 不用实际实现
-                }
-            };
+            InvocationHandler handler = (proxy, methodInProxy, argsInProxy) -> null; // 不用实际实现invoke方法
             Object proxy = Proxy.newProxyInstance(clazz.getClassLoader(), new Class<?>[] {clazz}, handler);
             Constructor<MethodHandles.Lookup> constructor =
                 MethodHandles.Lookup.class.getDeclaredConstructor(Class.class, int.class);

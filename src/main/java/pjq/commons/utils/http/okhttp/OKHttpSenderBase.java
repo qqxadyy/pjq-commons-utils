@@ -93,7 +93,7 @@ public abstract class OKHttpSenderBase {
     public static final String SSL_PROTOCOL_TLS = "TLS"; // 默认
     public static final String SSL_PROTOCOL_SSL = "SSL";
 
-    public static enum ParamDataType {
+    public enum ParamDataType {
         XML, JSON, RAW, KEY_VALUE_STR, KEY_VALUE_MAP;
     }
 

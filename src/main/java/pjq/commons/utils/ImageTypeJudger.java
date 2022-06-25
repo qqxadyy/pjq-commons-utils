@@ -37,13 +37,11 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 /**
- * <p>
  * 图片文件类型判断工具<br>
  * 读取文件的前几个字节，文件后缀不存在也可以解析
- * <p>
- * Create at 2019年1月15日
- * 
+ *
  * @author pengjianqiang
+ * @date 2019年1月15日
  */
 public final class ImageTypeJudger {
     private ImageTypeJudger() {}
