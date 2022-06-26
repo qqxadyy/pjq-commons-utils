@@ -49,7 +49,7 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
-import javax.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.MediaType;
 
 import org.apache.tika.Tika;
 
@@ -485,7 +485,7 @@ public abstract class OKHttpSenderBase {
         }
 
         builder.removeHeader(HEADER_CONTENT_TYPE); // 保证只有一个该header值
-        builder.addHeader(HEADER_CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED);// 必须加这句，否有些服务器获取不了参数
+        builder.addHeader(HEADER_CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED);// 必须加这句，否则有些服务器获取不了参数
         builder.post(requestBody);
     }
 
