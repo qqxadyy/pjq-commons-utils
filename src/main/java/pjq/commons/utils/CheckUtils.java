@@ -33,6 +33,8 @@ package pjq.commons.utils;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
@@ -50,22 +52,22 @@ import lombok.NoArgsConstructor;
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class CheckUtils {
-    public static boolean isEmpty(String s) {
+    public static boolean isEmpty(String str) {
         String invisibleChar = "\u200b|\u200B"; // 该字符串是不可见的，控制台等打印不出，但是有实际长度
-        String ns = null == s ? null : new String(s).trim().replaceAll(invisibleChar, "");
+        String ns = null == str ? null : new String(str).trim().replaceAll(invisibleChar, "");
         return StringUtils.isBlank(ns) || "null".equalsIgnoreCase(ns) || "undefined".equalsIgnoreCase(ns);
     }
 
-    public static boolean isNotEmpty(String s) {
-        return !isEmpty(s);
+    public static boolean isNotEmpty(String str) {
+        return !isEmpty(str);
     }
 
-    public static boolean areEmpty(String... ss) {
-        if (ArrayUtils.isEmpty(ss)) {
+    public static boolean areEmpty(String... strArray) {
+        if (ArrayUtils.isEmpty(strArray)) {
             return true;
         } else {
-            for (String s : ss) {
-                if (!isEmpty(s)) {
+            for (String str : strArray) {
+                if (!isEmpty(str)) {
                     return false;
                 }
             }
@@ -73,12 +75,12 @@ public final class CheckUtils {
         }
     }
 
-    public static boolean areNotEmpty(String... ss) {
-        if (ArrayUtils.isEmpty(ss)) {
+    public static boolean areNotEmpty(String... strArray) {
+        if (ArrayUtils.isEmpty(strArray)) {
             return false;
         } else {
-            for (String s : ss) {
-                if (isEmpty(s)) {
+            for (String str : strArray) {
+                if (isEmpty(str)) {
                     return false;
                 }
             }
@@ -122,52 +124,67 @@ public final class CheckUtils {
         return !isNull(obj);
     }
 
-    /**
-     * 判断字符串不能为空
-     * 
-     * @param s
-     *            要判断的字符串
-     * @param msg
-     */
-    public static void checkNotEmpty(String s, String msg) {
-        if (isEmpty(s)) {
-            throw new RuntimeException(msg);
+    @SafeVarargs
+    public static void checkNotEmpty(String str, String msg,
+        Function<String, ? extends RuntimeException>... exceptionFunc) {
+        if (isEmpty(str)) {
+            throw exceptionGetter(exceptionFunc).apply(msg);
         }
     }
 
-    public static void checkNotNull(Object obj, String msg) {
+    @SafeVarargs
+    public static void checkNotNull(Object obj, String msg,
+        Function<String, ? extends RuntimeException>... exceptionFunc) {
         if (isNull(obj)) {
-            throw new RuntimeException(msg);
+            throw exceptionGetter(exceptionFunc).apply(msg);
         }
     }
 
-    public static void checkNotEmpty(Collection<?> collection, String msg) {
+    @SafeVarargs
+    public static void checkNotEmpty(Collection<?> collection, String msg,
+        Function<String, ? extends RuntimeException>... exceptionFunc) {
         if (isEmpty(collection)) {
-            throw new RuntimeException(msg);
+            throw exceptionGetter(exceptionFunc).apply(msg);
         }
     }
 
-    public static void checkNotEmpty(Map<?, ?> map, String msg) {
+    @SafeVarargs
+    public static void checkNotEmpty(Map<?, ?> map, String msg,
+        Function<String, ? extends RuntimeException>... exceptionFunc) {
         if (isEmpty(map)) {
-            throw new RuntimeException(msg);
+            throw exceptionGetter(exceptionFunc).apply(msg);
         }
     }
 
-    public static void checkNotEmpty(Object[] array, String msg) {
+    @SafeVarargs
+    public static void checkNotEmpty(Object[] array, String msg,
+        Function<String, ? extends RuntimeException>... exceptionFunc) {
         if (isEmpty(array)) {
-            throw new RuntimeException(msg);
+            throw exceptionGetter(exceptionFunc).apply(msg);
         }
     }
 
-    public static void checkNotFalse(boolean bval, String msg) {
+    @SafeVarargs
+    public static void checkNotFalse(boolean bval, String msg,
+        Function<String, ? extends RuntimeException>... exceptionFunc) {
         if (!bval) {
-            throw new RuntimeException(msg);
+            throw exceptionGetter(exceptionFunc).apply(msg);
         }
     }
 
-    public static void checkNotTrue(boolean bval, String msg) {
+    @SafeVarargs
+    public static void checkNotTrue(boolean bval, String msg,
+        Function<String, ? extends RuntimeException>... exceptionFunc) {
         if (bval) {
-            throw new RuntimeException(msg);
+            throw exceptionGetter(exceptionFunc).apply(msg);
         }
+    }
+
+    @SafeVarargs
+    private static Function<String, ? extends RuntimeException>
+        exceptionGetter(Function<String, ? extends RuntimeException>... exceptionFunc) {
+        Supplier<Function<String, ? extends RuntimeException>> defaultExceptionGetter =
+            () -> (msg -> new RuntimeException(msg));
+        return DefaultValueGetter.getValue(defaultExceptionGetter, exceptionFunc);
     }
 }
