@@ -39,6 +39,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -92,7 +93,7 @@ public final class CollectionUtils {
      *            遍历操作，<code>(e,index)->{}</code>
      * @creator pengjianqiang@2021年4月20日
      */
-    public static <T> void forEach(Iterable<T> iterable, IndexConsumer<T, Integer> action) {
+    public static <T> void forEach(Iterable<T> iterable, BiConsumer<T, Integer> action) {
         forEachCommon(iterable, action);
     }
 
@@ -115,7 +116,7 @@ public final class CollectionUtils {
      *            遍历操作，<code>(entry,index)->{}</code>
      * @creator pengjianqiang@2021年4月20日
      */
-    public static <K, V> void forEach(Map<K, V> map, IndexConsumer<Entry<K, V>, Integer> action) {
+    public static <K, V> void forEach(Map<K, V> map, BiConsumer<Entry<K, V>, Integer> action) {
         forEachCommon(map.entrySet(), action);
     }
 
@@ -126,7 +127,7 @@ public final class CollectionUtils {
         forEach(Arrays.stream(array), action);
     }
 
-    public static <T> void forEach(T[] array, IndexConsumer<T, Integer> action) {
+    public static <T> void forEach(T[] array, BiConsumer<T, Integer> action) {
         if (CheckUtils.isEmpty(array)) {
             return;
         }
@@ -140,7 +141,7 @@ public final class CollectionUtils {
         forEach(stream.collect(Collectors.toList()), action);
     }
 
-    public static <T> void forEach(Stream<T> stream, IndexConsumer<T, Integer> action) {
+    public static <T> void forEach(Stream<T> stream, BiConsumer<T, Integer> action) {
         if (CheckUtils.isNull(stream)) {
             return;
         }
@@ -158,9 +159,9 @@ public final class CollectionUtils {
             return;
         }
 
-        boolean isIndexAction = (actionObj instanceof IndexConsumer);
+        boolean isIndexAction = (actionObj instanceof BiConsumer);
         Consumer<T> action = !isIndexAction ? (Consumer<T>)actionObj : null;
-        IndexConsumer<T, Integer> indexAction = isIndexAction ? (IndexConsumer<T, Integer>)actionObj : null;
+        BiConsumer<T, Integer> indexAction = isIndexAction ? (BiConsumer<T, Integer>)actionObj : null;
 
         int index = 0;
         while (iterator.hasNext()) {
@@ -416,19 +417,6 @@ public final class CollectionUtils {
 
     public static <T> T last(T[] array) {
         return CheckUtils.isEmpty(array) ? null : array[array.length - 1];
-    }
-
-    /**
-     * <p>
-     * 带数组索引的{@link Consumer}
-     * <p>
-     * Create at 2018年11月28日
-     * 
-     * @author pengjianqiang
-     */
-    @FunctionalInterface
-    public interface IndexConsumer<T, I> {
-        void accept(T t, I i);
     }
 
     @NoArgsConstructor
