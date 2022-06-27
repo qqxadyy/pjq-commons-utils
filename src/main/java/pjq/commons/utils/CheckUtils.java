@@ -124,6 +124,14 @@ public final class CheckUtils {
         return !isNull(obj);
     }
 
+    /**
+     * 判断字符串是否为空，为空时抛异常
+     * 
+     * @param str
+     * @param msg
+     * @param exceptionFunc
+     *            为空时默认抛出{@link RuntimeException}，否则抛出指定的异常类型
+     */
     @SafeVarargs
     public static void checkNotEmpty(String str, String msg,
         Function<String, ? extends RuntimeException>... exceptionFunc) {
