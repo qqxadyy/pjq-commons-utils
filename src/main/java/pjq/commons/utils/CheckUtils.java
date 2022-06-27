@@ -173,17 +173,17 @@ public final class CheckUtils {
     }
 
     @SafeVarargs
-    public static void checkNotFalse(boolean bval, String msg,
+    public static void checkNotFalse(boolean boolVal, String msg,
         Function<String, ? extends RuntimeException>... exceptionFunc) {
-        if (!bval) {
+        if (!boolVal) {
             throw exceptionGetter(exceptionFunc).apply(msg);
         }
     }
 
     @SafeVarargs
-    public static void checkNotTrue(boolean bval, String msg,
+    public static void checkNotTrue(boolean boolVal, String msg,
         Function<String, ? extends RuntimeException>... exceptionFunc) {
-        if (bval) {
+        if (boolVal) {
             throw exceptionGetter(exceptionFunc).apply(msg);
         }
     }
