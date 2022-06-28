@@ -277,7 +277,25 @@ public final class CollectionUtils {
      * @creator pengjianqiang@2021年4月20日
      */
     private static <T> Stream<T> filter(Stream<T> stream, Predicate<? super T> predicate) {
-        return CheckUtils.isNotNull(predicate) ? stream.filter(predicate) : stream;
+        return stream.filter(mergeNotNullPredicate(predicate));
+    }
+
+    /**
+     * 把一个过滤非空元素的过滤条件和参数的过滤条件进行and合并
+     * 
+     * @param <T>
+     *            过滤条件中的元素类型
+     * @param predicate
+     *            过滤元素用的过滤条件
+     * @return
+     * @creator pengjianqiang@2022年6月28日
+     */
+    @SafeVarargs
+    private static <T> Predicate<? super T> mergeNotNullPredicate(Predicate<? super T>... predicate) {
+        // 默认过滤不为空的元素，然后再用参数中的过滤条件(参数中的过滤条件为空时and一个返回true的新过滤条件即可)
+        Predicate<T> notNullPredicate = CheckUtils::isNotNull;
+        return notNullPredicate
+            .and(CheckUtils.isEmpty(predicate) || CheckUtils.isNull(predicate[0]) ? (t -> true) : predicate[0]);
     }
 
     /**
@@ -422,164 +440,192 @@ public final class CollectionUtils {
     /**
      * 根据mapper的处理转成目标list
      * 
-     * @param <T>
-     *            目标list元素类型
      * @param <S>
      *            源集合元素类型
+     * @param <T>
+     *            目标list元素类型
      * @param iterable
      *            源集合
      * @param mapper
-     *            转换处理器，<code>e->{}</code>，为空时返回空list
+     *            转换处理器，<code>e->{}</code>，为空时返回空list；mapper中返回Null时的元素会被最终过滤
+     * @param predicate
+     *            过滤条件，满足该条件的元素才会被转换
      * @return 目标list
      * @creator pengjianqiang@2021年4月20日
      */
-    public static <T, S> List<T> transformToList(Iterable<S> iterable, Function<S, T> mapper) {
+    @SafeVarargs
+    public static <S, T> List<T> transformToList(Iterable<S> iterable, Function<S, T> mapper,
+        Predicate<S>... predicate) {
         List<S> list = IterableUtils.toList(iterable);
         if (CheckUtils.isEmpty(list) || CheckUtils.isNull(mapper)) {
             return new ArrayList<>();
         }
-        return transformToList(list.stream(), mapper);
+        return transformToList(list.stream(), mapper, predicate);
     }
 
     /**
      * 根据mapper的处理转成目标list
      * 
-     * @param <T>
-     *            目标list元素类型
      * @param <K>
      *            源map的key元素类型
      * @param <V>
      *            源map的value元素类型
+     * @param <T>
+     *            目标list元素类型
      * @param map
      *            源map
      * @param mapper
-     *            转换处理器，<code>entry->{}</code>，为空时返回空list
+     *            转换处理器，<code>entry->{}</code>，为空时返回空list；mapper中返回Null时的元素会被最终过滤
+     * @param predicate
+     *            过滤条件，满足该条件的元素才会被转换
      * @return 目标list
      * @creator pengjianqiang@2021年4月20日
      */
-    public static <T, K, V> List<T> transformToList(Map<K, V> map, Function<Entry<K, V>, T> mapper) {
+    @SafeVarargs
+    public static <K, V, T> List<T> transformToList(Map<K, V> map, Function<Entry<K, V>, T> mapper,
+        Predicate<Entry<K, V>>... predicate) {
         if (CheckUtils.isEmpty(map) || CheckUtils.isNull(mapper)) {
             return new ArrayList<>();
         }
-        return transformToList(map.entrySet(), mapper);
+        return transformToList(map.entrySet(), mapper, predicate);
     }
 
     /**
      * 根据mapper的处理转成目标list
      * 
-     * @param <T>
-     *            目标list元素类型
      * @param <S>
      *            源数组元素类型
+     * @param <T>
+     *            目标list元素类型
      * @param array
      *            源数组
      * @param mapper
-     *            转换处理器，<code>e->{}</code>，为空时返回空list
+     *            转换处理器，<code>e->{}</code>，为空时返回空list；mapper中返回Null时的元素会被最终过滤
+     * @param predicate
+     *            过滤条件，满足该条件的元素才会被转换
      * @return 目标list
      * @creator pengjianqiang@2021年4月20日
      */
-    public static <T, S> List<T> transformToList(S[] array, Function<S, T> mapper) {
+    @SafeVarargs
+    public static <S, T> List<T> transformToList(S[] array, Function<S, T> mapper, Predicate<S>... predicate) {
         if (CheckUtils.isEmpty(array)) {
             return new ArrayList<>();
         }
-        return transformToList(Arrays.stream(array), mapper);
+        return transformToList(Arrays.stream(array), mapper, predicate);
     }
 
     /**
      * 根据mapper的处理转成目标list
      * 
-     * @param <T>
-     *            目标list元素类型
      * @param <S>
      *            源stream元素类型
+     * @param <T>
+     *            目标list元素类型
      * @param stream
      *            源stream
      * @param mapper
-     *            转换处理器，<code>e->{}</code>，为空时返回空list
+     *            转换处理器，<code>e->{}</code>，为空时返回空list；mapper中返回Null时的元素会被最终过滤
+     * @param predicate
+     *            过滤条件，满足该条件的元素才会被转换
      * @return 目标list
      * @creator pengjianqiang@2021年4月20日
      */
-    public static <T, S> List<T> transformToList(Stream<S> stream, Function<S, T> mapper) {
+    @SafeVarargs
+    public static <S, T> List<T> transformToList(Stream<S> stream, Function<S, T> mapper, Predicate<S>... predicate) {
         if (CheckUtils.isNull(stream) || CheckUtils.isNull(mapper)) {
             return new ArrayList<>();
         }
-        List<T> targetList = stream.map(mapper).collect(Collectors.toList());
-        removeNull(targetList); //过滤null后再返回
-        return targetList;
+
+        // 先根据参数传入的断言过滤数据，然后转换，最后再过滤一次为空的数据
+        return filter(stream, mergeNotNullPredicate(predicate)).map(mapper).filter(CheckUtils::isNotNull)
+            .collect(Collectors.toList());
     }
 
     /**
      * 根据mapper的处理转成目标set
      * 
-     * @param <T>
-     *            目标set元素类型
      * @param <S>
      *            源集合元素类型
+     * @param <T>
+     *            目标set元素类型
      * @param iterable
      *            源集合
      * @param mapper
-     *            转换处理器，<code>e->{}</code>，为空时返回空set
+     *            转换处理器，<code>e->{}</code>，为空时返回空set；mapper中返回Null时的元素会被最终过滤
+     * @param predicate
+     *            过滤条件，满足该条件的元素才会被转换
      * @return 目标set
      * @creator pengjianqiang@2022年6月28日
      */
-    public static <T, S> Set<T> transformToSet(Iterable<S> iterable, Function<S, T> mapper) {
-        return new HashSet<>(transformToList(iterable, mapper));
+    @SafeVarargs
+    public static <S, T> Set<T> transformToSet(Iterable<S> iterable, Function<S, T> mapper, Predicate<S>... predicate) {
+        return new HashSet<>(transformToList(iterable, mapper, predicate));
     }
 
     /**
      * 根据mapper的处理转成目标set
      * 
-     * @param <T>
-     *            目标set元素类型
      * @param <K>
      *            源map的key元素类型
      * @param <V>
      *            源map的value元素类型
+     * @param <T>
+     *            目标set元素类型
      * @param map
      *            源map
      * @param mapper
-     *            转换处理器，<code>entry->{}</code>，为空时返回空set
+     *            转换处理器，<code>entry->{}</code>，为空时返回空set；mapper中返回Null时的元素会被最终过滤
+     * @param predicate
+     *            过滤条件，满足该条件的元素才会被转换
      * @return 目标set
      * @creator pengjianqiang@2022年6月28日
      */
-    public static <T, K, V> Set<T> transformToSet(Map<K, V> map, Function<Entry<K, V>, T> mapper) {
-        return new HashSet<>(transformToList(map, mapper));
+    @SafeVarargs
+    public static <K, V, T> Set<T> transformToSet(Map<K, V> map, Function<Entry<K, V>, T> mapper,
+        Predicate<Entry<K, V>>... predicate) {
+        return new HashSet<>(transformToList(map, mapper, predicate));
     }
 
     /**
      * 根据mapper的处理转成目标set
      * 
-     * @param <T>
-     *            目标set元素类型
      * @param <S>
      *            源数组元素类型
+     * @param <T>
+     *            目标set元素类型
      * @param array
      *            源数组
      * @param mapper
-     *            转换处理器，<code>e->{}</code>，为空时返回空set
+     *            转换处理器，<code>e->{}</code>，为空时返回空set；mapper中返回Null时的元素会被最终过滤
+     * @param predicate
+     *            过滤条件，满足该条件的元素才会被转换
      * @return 目标set
      * @creator pengjianqiang@2021年4月20日
      */
-    public static <T, S> Set<T> transformToSet(S[] array, Function<S, T> mapper) {
-        return new HashSet<>(transformToList(array, mapper));
+    @SafeVarargs
+    public static <S, T> Set<T> transformToSet(S[] array, Function<S, T> mapper, Predicate<S>... predicate) {
+        return new HashSet<>(transformToList(array, mapper, predicate));
     }
 
     /**
      * 根据mapper的处理转成目标set
      * 
-     * @param <T>
-     *            目标set元素类型
      * @param <S>
      *            源stream元素类型
+     * @param <T>
+     *            目标set元素类型
      * @param stream
      *            源stream
      * @param mapper
-     *            转换处理器，<code>e->{}</code>，为空时返回空set
+     *            转换处理器，<code>e->{}</code>，为空时返回空set；mapper中返回Null时的元素会被最终过滤
+     * @param predicate
+     *            过滤条件，满足该条件的元素才会被转换
      * @return 目标set
      * @creator pengjianqiang@2021年4月20日
      */
-    public static <T, S> Set<T> transformToSet(Stream<S> stream, Function<S, T> mapper) {
-        return new HashSet<>(transformToList(stream, mapper));
+    @SafeVarargs
+    public static <S, T> Set<T> transformToSet(Stream<S> stream, Function<S, T> mapper, Predicate<S>... predicate) {
+        return new HashSet<>(transformToList(stream, mapper, predicate));
     }
 
     /**
@@ -598,16 +644,19 @@ public final class CollectionUtils {
      *            key转换处理器，<code>e->{}</code>，为空时返回空map
      * @param valueMapper
      *            value转换处理器，<code>e->{}</code>，为空时返回空map
+     * @param predicate
+     *            过滤条件，满足该条件的元素才会被转换
      * @return 目标map
      * @creator pengjianqiang@2021年4月20日
      */
+    @SafeVarargs
     public static <S, K, V> Map<K, V> transformToMap(Iterable<S> iterable, Function<S, K> keyMapper,
-        Function<S, V> valueMapper) {
+        Function<S, V> valueMapper, Predicate<S>... predicate) {
         List<S> list = IterableUtils.toList(iterable);
         if (CheckUtils.isEmpty(list) || CheckUtils.isNull(keyMapper) || CheckUtils.isNull(valueMapper)) {
             return new HashMap<>();
         }
-        return transformToMap(list.stream(), keyMapper, valueMapper);
+        return transformToMap(list.stream(), keyMapper, valueMapper, predicate);
     }
 
     /**
@@ -628,11 +677,14 @@ public final class CollectionUtils {
      *            key转换处理器，<code>entry->{}</code>，为空时返回空map
      * @param valueMapper
      *            value转换处理器，<code>entry->{}</code>，为空时返回空map
+     * @param predicate
+     *            过滤条件，满足该条件的元素才会被转换
      * @return 目标map
      * @creator pengjianqiang@2021年5月11日
      */
+    @SafeVarargs
     public static <SK, SV, K, V> Map<K, V> transformToMap(Map<SK, SV> map, Function<Entry<SK, SV>, K> keyMapper,
-        Function<Entry<SK, SV>, V> valueMapper) {
+        Function<Entry<SK, SV>, V> valueMapper, Predicate<Entry<SK, SV>>... predicate) {
         if (CheckUtils.isEmpty(map) || CheckUtils.isNull(keyMapper) || CheckUtils.isNull(valueMapper)) {
             return new HashMap<>();
         }
@@ -640,10 +692,11 @@ public final class CollectionUtils {
         Stream<Entry<SK, SV>> stream = map.entrySet().stream();
         if (map instanceof LinkedHashMap) {
             // 如果map本身有序，则返回一个有序map
-            return stream
+            // 先根据参数传入的断言过滤数据，然后再转换
+            return filter(stream, mergeNotNullPredicate(predicate))
                 .collect(Collectors.toMap(keyMapper, valueMapper, (value1, value2) -> value2, LinkedHashMap::new));
         } else {
-            return transformToMap(stream, keyMapper, valueMapper);
+            return transformToMap(stream, keyMapper, valueMapper, predicate);
         }
     }
 
@@ -663,14 +716,18 @@ public final class CollectionUtils {
      *            key转换处理器，<code>e->{}</code>，为空时返回空map
      * @param valueMapper
      *            value转换处理器，<code>e->{}</code>，为空时返回空map
+     * @param predicate
+     *            过滤条件，满足该条件的元素才会被转换
      * @return 目标map
      * @creator pengjianqiang@2021年4月20日
      */
-    public static <S, K, V> Map<K, V> transformToMap(S[] array, Function<S, K> keyMapper, Function<S, V> valueMapper) {
+    @SafeVarargs
+    public static <S, K, V> Map<K, V> transformToMap(S[] array, Function<S, K> keyMapper, Function<S, V> valueMapper,
+        Predicate<S>... predicate) {
         if (CheckUtils.isEmpty(array) || CheckUtils.isNull(keyMapper) || CheckUtils.isNull(valueMapper)) {
             return new HashMap<>();
         }
-        return transformToMap(Arrays.stream(array), keyMapper, valueMapper);
+        return transformToMap(Arrays.stream(array), keyMapper, valueMapper, predicate);
     }
 
     /**
@@ -689,15 +746,21 @@ public final class CollectionUtils {
      *            key转换处理器，<code>e->{}</code>，为空时返回空map
      * @param valueMapper
      *            value转换处理器，<code>e->{}</code>，为空时返回空map
+     * @param predicate
+     *            过滤条件，满足该条件的元素才会被转换
      * @return 目标map
      * @creator pengjianqiang@2021年4月20日
      */
+    @SafeVarargs
     public static <S, K, V> Map<K, V> transformToMap(Stream<S> stream, Function<S, K> keyMapper,
-        Function<S, V> valueMapper) {
+        Function<S, V> valueMapper, Predicate<S>... predicate) {
         if (CheckUtils.isNull(stream) || CheckUtils.isNull(keyMapper) || CheckUtils.isNull(valueMapper)) {
             return new HashMap<>();
         }
-        return stream.collect(Collectors.toMap(keyMapper, valueMapper, (value1, value2) -> value2));
+
+        // 先根据参数传入的断言过滤数据，然后再转换
+        return filter(stream, mergeNotNullPredicate(predicate))
+            .collect(Collectors.toMap(keyMapper, valueMapper, (value1, value2) -> value2));
     }
 
     /**
