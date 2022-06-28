@@ -62,32 +62,6 @@ public final class CheckUtils {
         return !isEmpty(str);
     }
 
-    public static boolean areEmpty(String... strArray) {
-        if (ArrayUtils.isEmpty(strArray)) {
-            return true;
-        } else {
-            for (String str : strArray) {
-                if (!isEmpty(str)) {
-                    return false;
-                }
-            }
-            return true;
-        }
-    }
-
-    public static boolean areNotEmpty(String... strArray) {
-        if (ArrayUtils.isEmpty(strArray)) {
-            return false;
-        } else {
-            for (String str : strArray) {
-                if (isEmpty(str)) {
-                    return false;
-                }
-            }
-            return true;
-        }
-    }
-
     public static boolean isEmpty(Collection<?> collection) {
         return CollectionUtils.isEmpty(collection);
     }
@@ -122,6 +96,58 @@ public final class CheckUtils {
 
     public static boolean isNotNull(Object obj) {
         return !isNull(obj);
+    }
+
+    public static boolean areEmpty(String... strArray) {
+        if (ArrayUtils.isEmpty(strArray)) {
+            return true;
+        } else {
+            for (String str : strArray) {
+                if (!isEmpty(str)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    public static boolean areNotEmpty(String... strArray) {
+        if (ArrayUtils.isEmpty(strArray)) {
+            return false;
+        } else {
+            for (String str : strArray) {
+                if (isEmpty(str)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    public static boolean areNull(Object... objArray) {
+        if (ArrayUtils.isEmpty(objArray)) {
+            return true;
+        } else {
+            for (Object obj : objArray) {
+                if (!isNull(obj)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    public static boolean areNotNull(Object... objArray) {
+        if (ArrayUtils.isEmpty(objArray)) {
+            return false;
+        } else {
+            for (Object obj : objArray) {
+                if (isNull(obj)) {
+                    return false;
+                }
+            }
+            return true;
+        }
     }
 
     /**
