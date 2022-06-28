@@ -209,7 +209,7 @@ public final class DateTimeUtils {
     }
 
     /**
-     * 通用日期时间格式化，用于直接指定pattern<br/>
+     * 通用日期时间格式化，用于直接指定pattern<br>
      * 其它parse方法都限定成使用较多的pattern才能使用，而该方法可直接指定不常用的pattern，但是必须根据date的类型指定可用的pattern
      * 
      * @param dateStr
@@ -239,7 +239,7 @@ public final class DateTimeUtils {
     }
 
     /**
-     * 通用日期时间格式化，用于直接指定pattern<br/>
+     * 通用日期时间格式化，用于直接指定pattern<br>
      * 其它parse方法都限定成使用较多的pattern才能使用，而该方法可直接指定不常用的pattern，但是必须根据date的类型指定可用的pattern
      * 
      * @param <R>
@@ -390,7 +390,7 @@ public final class DateTimeUtils {
     }
 
     /**
-     * 通用日期时间格式化，用于直接指定pattern<br/>
+     * 通用日期时间格式化，用于直接指定pattern<br>
      * 其它format方法都限定成使用较多的pattern才能使用，而该方法可直接指定不常用的pattern，但是必须根据date的类型指定可用的pattern
      * 
      * @param date
@@ -689,7 +689,7 @@ public final class DateTimeUtils {
     }
 
     /**
-     * 日期相加/减<br/>
+     * 日期相加/减<br>
      * 
      * @param dateTime
      * @param amountToAdd
@@ -703,7 +703,7 @@ public final class DateTimeUtils {
     }
 
     /**
-     * 日期相加/减<br/>
+     * 日期相加/减<br>
      * (实际相当于00:00:00的日期做时间相加减，然后返回缺少时分秒信息的日期对象)
      * 
      * @param dateTime
