@@ -33,6 +33,7 @@ package pjq.commons.utils;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 import lombok.AccessLevel;
@@ -41,6 +42,9 @@ import pjq.commons.support.NoParamConsumer;
 
 /**
  * 增强的{@link CheckUtils}工具类，用链式写法实现，且提供了简单的当true/false时做不同操作的方法<br>
+ * 一般是想要类似三元操作符的效果，但是又不想要先用变量指定对应结果值时使用。类似{@link Optional#orElseGet(Supplier)}的用途<br>
+ * <br>
+ * 注意：<br>
  * 1.组合条件时提供的方法都是and连接，需要or时直接使用{@link #or(boolean)}方法，混合时用时用回常规的if...else写法<br>
  * 2.复杂的if...else if...else用回常规写法
  * 

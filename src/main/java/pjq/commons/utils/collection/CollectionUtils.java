@@ -34,11 +34,15 @@ package pjq.commons.utils.collection;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -83,7 +87,7 @@ public final class CollectionUtils {
     /**
      * 遍历集合，可以在action方法中抛出{@link Break}或{@link Continue}异常进行控制<br>
      * 如果action里面本身有必须显式捕捉的异常，则可以在catch中根据情况抛出Break或Continue异常<br>
-     * 当集合非有序时，action的下标不一定符合预期，慎用
+     * 当集合非有序时，action的下标不一定符合预期，根据实际情况判断
      * 
      * @param <T>
      *            集合元素类型
@@ -104,7 +108,7 @@ public final class CollectionUtils {
     /**
      * 遍历map，可以在action方法中抛出{@link Break}或{@link Continue}异常进行控制<br>
      * 如果action里面本身有必须显式捕捉的异常，则可以在catch中根据情况抛出Break或Continue异常<br>
-     * 当map非有序时，action的下标不一定符合预期，慎用
+     * 当map非有序时，action的下标不一定符合预期，根据实际情况判断
      * 
      * @param <K>
      *            map的key元素类型
@@ -278,7 +282,7 @@ public final class CollectionUtils {
 
     /**
      * 根据条件过滤集合，并返回第一个符合条件的对象<br>
-     * 当集合非有序时，返回结果不一定符合预期，慎用
+     * 当集合非有序时，返回结果不一定符合预期，根据实际情况判断
      * 
      * @param <T>
      *            集合元素类型
@@ -295,7 +299,7 @@ public final class CollectionUtils {
 
     /**
      * 根据条件过滤map，并返回第一个符合条件的对象<br>
-     * 当map非有序时，返回结果不一定符合预期，慎用
+     * 当map非有序时，返回结果不一定符合预期，根据实际情况判断
      * 
      * @param <K>
      *            map的key元素类型
@@ -318,7 +322,7 @@ public final class CollectionUtils {
 
     /**
      * 获取集合的第一个对象<br>
-     * 当集合非有序时，返回结果不一定符合预期，慎用
+     * 当集合非有序时，返回结果不一定符合预期，根据实际情况判断
      * 
      * @param <T>
      *            集合元素类型
@@ -331,16 +335,12 @@ public final class CollectionUtils {
         if (CheckUtils.isNull(iterable)) {
             return null;
         }
-        Iterator<T> iterator = iterable.iterator();
-        while (iterator.hasNext()) {
-            return iterator.next();
-        }
-        return null;
+        return iterable.iterator().next();
     }
 
     /**
      * 获取集合的最后一个对象<br>
-     * 当集合非有序时，返回结果不一定符合预期，慎用
+     * 当集合非有序时，返回结果不一定符合预期，根据实际情况判断
      * 
      * @param <T>
      *            集合元素类型
@@ -362,8 +362,8 @@ public final class CollectionUtils {
     }
 
     /**
-     * 获取map的第一个元素<br>
-     * 当map非有序时，返回结果不一定符合预期，慎用
+     * 获取map的第一个元素新构成的map<br>
+     * 当map非有序时，返回结果不一定符合预期，根据实际情况判断
      * 
      * @param <K>
      *            map的key元素类型
@@ -385,8 +385,8 @@ public final class CollectionUtils {
     }
 
     /**
-     * 获取map的最后一个元素<br>
-     * 当map非有序时，返回结果不一定符合预期，慎用
+     * 获取map的最后一个元素新构成的map<br>
+     * 当map非有序时，返回结果不一定符合预期，根据实际情况判断
      * 
      * @param <K>
      *            map的key元素类型
@@ -417,30 +417,6 @@ public final class CollectionUtils {
 
     public static <T> T last(T[] array) {
         return CheckUtils.isEmpty(array) ? null : array[array.length - 1];
-    }
-
-    @NoArgsConstructor
-    @SuppressWarnings("serial")
-    public static class Break extends RuntimeException {
-        public Break(String msg) {
-            super(msg);
-        }
-
-        public Break(Throwable cause) {
-            super(cause);
-        }
-    }
-
-    @NoArgsConstructor
-    @SuppressWarnings("serial")
-    public static class Continue extends RuntimeException {
-        public Continue(String msg) {
-            super(msg);
-        }
-
-        public Continue(Throwable cause) {
-            super(cause);
-        }
     }
 
     /**
@@ -527,7 +503,83 @@ public final class CollectionUtils {
         if (CheckUtils.isNull(stream) || CheckUtils.isNull(mapper)) {
             return new ArrayList<>();
         }
-        return stream.map(mapper).collect(Collectors.toList());
+        List<T> targetList = stream.map(mapper).collect(Collectors.toList());
+        removeNull(targetList); //过滤null后再返回
+        return targetList;
+    }
+
+    /**
+     * 根据mapper的处理转成目标set
+     * 
+     * @param <T>
+     *            目标set元素类型
+     * @param <S>
+     *            源集合元素类型
+     * @param iterable
+     *            源集合
+     * @param mapper
+     *            转换处理器，<code>e->{}</code>，为空时返回空set
+     * @return 目标set
+     * @creator pengjianqiang@2022年6月28日
+     */
+    public static <T, S> Set<T> transformToSet(Iterable<S> iterable, Function<S, T> mapper) {
+        return new HashSet<>(transformToList(iterable, mapper));
+    }
+
+    /**
+     * 根据mapper的处理转成目标set
+     * 
+     * @param <T>
+     *            目标set元素类型
+     * @param <K>
+     *            源map的key元素类型
+     * @param <V>
+     *            源map的value元素类型
+     * @param map
+     *            源map
+     * @param mapper
+     *            转换处理器，<code>entry->{}</code>，为空时返回空set
+     * @return 目标set
+     * @creator pengjianqiang@2022年6月28日
+     */
+    public static <T, K, V> Set<T> transformToSet(Map<K, V> map, Function<Entry<K, V>, T> mapper) {
+        return new HashSet<>(transformToList(map, mapper));
+    }
+
+    /**
+     * 根据mapper的处理转成目标set
+     * 
+     * @param <T>
+     *            目标set元素类型
+     * @param <S>
+     *            源数组元素类型
+     * @param array
+     *            源数组
+     * @param mapper
+     *            转换处理器，<code>e->{}</code>，为空时返回空set
+     * @return 目标set
+     * @creator pengjianqiang@2021年4月20日
+     */
+    public static <T, S> Set<T> transformToSet(S[] array, Function<S, T> mapper) {
+        return new HashSet<>(transformToList(array, mapper));
+    }
+
+    /**
+     * 根据mapper的处理转成目标set
+     * 
+     * @param <T>
+     *            目标set元素类型
+     * @param <S>
+     *            源stream元素类型
+     * @param stream
+     *            源stream
+     * @param mapper
+     *            转换处理器，<code>e->{}</code>，为空时返回空set
+     * @return 目标set
+     * @creator pengjianqiang@2021年4月20日
+     */
+    public static <T, S> Set<T> transformToSet(Stream<S> stream, Function<S, T> mapper) {
+        return new HashSet<>(transformToList(stream, mapper));
     }
 
     /**
@@ -573,9 +625,9 @@ public final class CollectionUtils {
      * @param map
      *            源map
      * @param keyMapper
-     *            key转换处理器，<code>e->{}</code>，为空时返回空map
+     *            key转换处理器，<code>entry->{}</code>，为空时返回空map
      * @param valueMapper
-     *            value转换处理器，<code>e->{}</code>，为空时返回空map
+     *            value转换处理器，<code>entry->{}</code>，为空时返回空map
      * @return 目标map
      * @creator pengjianqiang@2021年5月11日
      */
@@ -584,7 +636,15 @@ public final class CollectionUtils {
         if (CheckUtils.isEmpty(map) || CheckUtils.isNull(keyMapper) || CheckUtils.isNull(valueMapper)) {
             return new HashMap<>();
         }
-        return transformToMap(map.entrySet(), keyMapper, valueMapper);
+
+        Stream<Entry<SK, SV>> stream = map.entrySet().stream();
+        if (map instanceof LinkedHashMap) {
+            // 如果map本身有序，则返回一个有序map
+            return stream
+                .collect(Collectors.toMap(keyMapper, valueMapper, (value1, value2) -> value2, LinkedHashMap::new));
+        } else {
+            return transformToMap(stream, keyMapper, valueMapper);
+        }
     }
 
     /**
@@ -641,6 +701,34 @@ public final class CollectionUtils {
     }
 
     /**
+     * 移除集合中的Null元素
+     * 
+     * @param <S>
+     *            源集合元素类型
+     * @param collection
+     *            要移除Null的集合
+     * @creator pengjianqiang@2022年6月28日
+     */
+    public static <S> void removeNull(Collection<S> collection) {
+        collection.removeIf(CheckUtils::isNull);
+    }
+
+    /**
+     * 移除Map中key和value都Null的元素
+     * 
+     * @param <K>
+     *            map的key元素类型
+     * @param <V>
+     *            map的value元素类型
+     * @param map
+     *            要移除Null的map
+     * @creator pengjianqiang@2022年6月28日
+     */
+    public static <K, V> void removeNull(Map<K, V> map) {
+        map.remove(null, null);
+    }
+
+    /**
      * 查找对象在数组中的下标
      * 
      * @param array
@@ -652,5 +740,29 @@ public final class CollectionUtils {
      */
     public static int indexOf(Object[] array, Object objectToFind) {
         return ArrayUtils.indexOf(array, objectToFind);
+    }
+
+    @NoArgsConstructor
+    @SuppressWarnings("serial")
+    public static class Break extends RuntimeException {
+        public Break(String msg) {
+            super(msg);
+        }
+
+        public Break(Throwable cause) {
+            super(cause);
+        }
+    }
+
+    @NoArgsConstructor
+    @SuppressWarnings("serial")
+    public static class Continue extends RuntimeException {
+        public Continue(String msg) {
+            super(msg);
+        }
+
+        public Continue(Throwable cause) {
+            super(cause);
+        }
     }
 }
