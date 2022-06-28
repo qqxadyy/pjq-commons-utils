@@ -143,14 +143,6 @@ public final class EnhanceCheckUtils {
         return and(CheckUtils.isNotEmpty(str));
     }
 
-    public EnhanceCheckUtils areEmpty(String... strArray) {
-        return and(CheckUtils.areEmpty(strArray));
-    }
-
-    public EnhanceCheckUtils areNotEmpty(String... strArray) {
-        return and(CheckUtils.areNotEmpty(strArray));
-    }
-
     public EnhanceCheckUtils isEmpty(Collection<?> collection) {
         return and(CheckUtils.isEmpty(collection));
     }
@@ -181,5 +173,21 @@ public final class EnhanceCheckUtils {
 
     public EnhanceCheckUtils isNotNull(Object obj) {
         return and(CheckUtils.isNotNull(obj));
+    }
+
+    public EnhanceCheckUtils areEmpty(String... strArray) {
+        return and(CheckUtils.areEmpty(strArray));
+    }
+
+    public EnhanceCheckUtils areNotEmpty(String... strArray) {
+        return and(CheckUtils.areNotEmpty(strArray));
+    }
+
+    public EnhanceCheckUtils areNull(Object... objArray) {
+        return and(CheckUtils.areNull(objArray));
+    }
+
+    public EnhanceCheckUtils areNotNull(Object... objArray) {
+        return and(CheckUtils.areNotNull(objArray));
     }
 }
