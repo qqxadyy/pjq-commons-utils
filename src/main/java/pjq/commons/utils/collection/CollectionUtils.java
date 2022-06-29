@@ -216,7 +216,7 @@ public final class CollectionUtils {
         if (CheckUtils.isNull(iterable)) {
             return new ArrayList<>();
         }
-        return filter(IterableUtils.toList(iterable).stream(), predicate).collect(Collectors.toList());
+        return filterStream(IterableUtils.toList(iterable).stream(), predicate).collect(Collectors.toList());
     }
 
     /**
@@ -237,8 +237,8 @@ public final class CollectionUtils {
         if (CheckUtils.isEmpty(map)) {
             return new HashMap<>();
         }
-        Map<K, V> filteredMap =
-            filter(map.entrySet().stream(), predicate).collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue()));
+        Map<K, V> filteredMap = filterStream(map.entrySet().stream(), predicate)
+            .collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue()));
         return filteredMap;
     }
 
@@ -259,7 +259,7 @@ public final class CollectionUtils {
         if (CheckUtils.isEmpty(array)) {
             return array;
         }
-        List<T> filteredList = filter(Arrays.stream(array), predicate).collect(Collectors.toList());
+        List<T> filteredList = filterStream(Arrays.stream(array), predicate).collect(Collectors.toList());
         return filteredList.stream()
             .toArray(t -> (T[])Array.newInstance(array.getClass().getComponentType(), filteredList.size()));
     }
@@ -276,7 +276,7 @@ public final class CollectionUtils {
      * @return
      * @creator pengjianqiang@2021年4月20日
      */
-    private static <T> Stream<T> filter(Stream<T> stream, Predicate<? super T> predicate) {
+    private static <T> Stream<T> filterStream(Stream<T> stream, Predicate<? super T> predicate) {
         return stream.filter(mergeNotNullPredicate(predicate));
     }
 
@@ -353,7 +353,11 @@ public final class CollectionUtils {
         if (CheckUtils.isNull(iterable)) {
             return null;
         }
-        return iterable.iterator().next();
+        Iterator<T> iterator = iterable.iterator();
+        while (iterator.hasNext()) {
+            return iterator.next();
+        }
+        return null;
     }
 
     /**
@@ -537,7 +541,7 @@ public final class CollectionUtils {
         }
 
         // 先根据参数传入的断言过滤数据，然后转换，最后再过滤一次为空的数据
-        return filter(stream, mergeNotNullPredicate(predicate)).map(mapper).filter(CheckUtils::isNotNull)
+        return filterStream(stream, mergeNotNullPredicate(predicate)).map(mapper).filter(CheckUtils::isNotNull)
             .collect(Collectors.toList());
     }
 
@@ -693,7 +697,7 @@ public final class CollectionUtils {
         if (map instanceof LinkedHashMap) {
             // 如果map本身有序，则返回一个有序map
             // 先根据参数传入的断言过滤数据，然后再转换
-            return filter(stream, mergeNotNullPredicate(predicate))
+            return filterStream(stream, mergeNotNullPredicate(predicate))
                 .collect(Collectors.toMap(keyMapper, valueMapper, (value1, value2) -> value2, LinkedHashMap::new));
         } else {
             return transformToMap(stream, keyMapper, valueMapper, predicate);
@@ -759,7 +763,7 @@ public final class CollectionUtils {
         }
 
         // 先根据参数传入的断言过滤数据，然后再转换
-        return filter(stream, mergeNotNullPredicate(predicate))
+        return filterStream(stream, mergeNotNullPredicate(predicate))
             .collect(Collectors.toMap(keyMapper, valueMapper, (value1, value2) -> value2));
     }
 

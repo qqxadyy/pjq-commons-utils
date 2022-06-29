@@ -87,7 +87,7 @@ public final class EnhanceCheckUtils {
      * @creator pengjianqiang@2022年6月27日
      */
     public void exec(NoParamConsumer doIfTrue, NoParamConsumer doIfFalse) {
-        DefaultValueGetter.getValue(() -> (() -> {
+        DefaultValueGetter.get(() -> (() -> {
         }), (test() ? doIfTrue : doIfFalse)).accept();
     }
 
@@ -114,7 +114,7 @@ public final class EnhanceCheckUtils {
      */
     public <T> T get(Supplier<T> objIfTrue, Supplier<T> objIfFalse) {
         // "() -> (() -> null)"表示一个返回null的Supplier
-        return DefaultValueGetter.getValue(() -> (() -> null), (test() ? objIfTrue : objIfFalse)).get();
+        return DefaultValueGetter.get(() -> (() -> null), (test() ? objIfTrue : objIfFalse)).get();
     }
 
     public EnhanceCheckUtils and(boolean boolVal) {
