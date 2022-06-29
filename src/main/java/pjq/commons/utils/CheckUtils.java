@@ -219,6 +219,6 @@ public final class CheckUtils {
         exceptionGetter(Function<String, ? extends RuntimeException>... exceptionFunc) {
         Supplier<Function<String, ? extends RuntimeException>> defaultExceptionGetter =
             () -> (msg -> new RuntimeException(msg));
-        return DefaultValueGetter.getValue(defaultExceptionGetter, exceptionFunc);
+        return DefaultValueGetter.get(defaultExceptionGetter, exceptionFunc);
     }
 }

@@ -59,21 +59,6 @@ public class DefaultValueGetter {
         }
     }
 
-    public static <T> T getValue(Supplier<T> defaultValueGetter, T value) {
-        if (CheckUtils.isNotNull(value)) {
-            if (value instanceof String) {
-                if (CheckUtils.isNotEmpty((String)value)) {
-                    return value;
-                } else {
-                    return defaultValueGetter.get();
-                }
-            }
-            return value;
-        } else {
-            return defaultValueGetter.get();
-        }
-    }
-
     @SafeVarargs
     public static <T> T getValue(T defaultValue, T... array) {
         if (CheckUtils.isNotEmpty(array) && CheckUtils.isNotNull(array[0])) {
@@ -90,8 +75,23 @@ public class DefaultValueGetter {
         }
     }
 
+    public static <T> T get(Supplier<T> defaultValueGetter, T value) {
+        if (CheckUtils.isNotNull(value)) {
+            if (value instanceof String) {
+                if (CheckUtils.isNotEmpty((String)value)) {
+                    return value;
+                } else {
+                    return defaultValueGetter.get();
+                }
+            }
+            return value;
+        } else {
+            return defaultValueGetter.get();
+        }
+    }
+
     @SafeVarargs
-    public static <T> T getValue(Supplier<T> defaultValueGetter, T... array) {
+    public static <T> T get(Supplier<T> defaultValueGetter, T... array) {
         if (CheckUtils.isNotEmpty(array) && CheckUtils.isNotNull(array[0])) {
             if (array instanceof String[]) {
                 if (CheckUtils.isNotEmpty((String)array[0])) {
