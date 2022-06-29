@@ -35,6 +35,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,6 +59,36 @@ import okio.Source;
 public final class OkioUtils {
     private static final String NOT_NULL_MSG = "不能为空";
 
+    private static void checkFilePath(String filePath, String nameDesc) {
+        CheckUtils.checkNotEmpty(filePath, nameDesc + NOT_NULL_MSG);
+    }
+
+    private static void checkFile(File file, String nameDesc) {
+        CheckUtils.checkNotNull(file, nameDesc + NOT_NULL_MSG);
+        CheckUtils.checkNotTrue(file.isDirectory(), nameDesc + "不能是目录");
+    }
+
+    private static void checkObject(Object stream, String nameDesc) {
+        CheckUtils.checkNotNull(stream, nameDesc + NOT_NULL_MSG);
+    }
+
+    private static File[] checkSrcAndDestFile(File srcFile, String srcFilePath, File destFile, String descFilePath) {
+        if (CheckUtils.isNull(srcFile)) {
+            checkFilePath(srcFilePath, "源文件对象");
+            srcFile = new File(srcFilePath);
+        }
+        if (CheckUtils.isNull(destFile)) {
+            checkFilePath(descFilePath, "目标文件对象");
+            destFile = new File(descFilePath);
+        }
+        checkFile(srcFile, "源文件对象");
+        checkFile(destFile, "目标文件对象");
+
+        destFile.getParentFile().mkdirs();
+
+        return new File[] {srcFile, destFile};
+    }
+
     /**
      * 读文件并返回每行字符串
      * 
@@ -66,7 +98,7 @@ public final class OkioUtils {
      * @creator pengjianqiang@2022年6月28日
      */
     public static List<String> readLines(String filePath) {
-        CheckUtils.checkNotNull(filePath, "文件路径" + NOT_NULL_MSG);
+        checkFilePath(filePath, "文件路径");
         return readLines(new File(filePath));
     }
 
@@ -79,7 +111,7 @@ public final class OkioUtils {
      * @creator pengjianqiang@2022年6月28日
      */
     public static List<String> readLines(File file) {
-        CheckUtils.checkNotNull(file, "文件对象" + NOT_NULL_MSG);
+        checkFile(file, "文件对象");
         try {
             return readLines(new FileInputStream(file));
         } catch (Exception e) {
@@ -96,7 +128,7 @@ public final class OkioUtils {
      * @creator pengjianqiang@2022年6月28日
      */
     public static List<String> readLines(InputStream inputStream) {
-        CheckUtils.checkNotNull(inputStream, "文件流对象" + NOT_NULL_MSG);
+        checkObject(inputStream, "文件流对象");
         List<String> lines = new ArrayList<>();
         try (BufferedSource bufferedSource = Okio.buffer(Okio.source(inputStream))) {
             for (String line; null != (line = bufferedSource.readUtf8Line());) {
@@ -117,7 +149,7 @@ public final class OkioUtils {
      * @creator pengjianqiang@2022年6月28日
      */
     public static ByteString readByteString(String filePath) {
-        CheckUtils.checkNotNull(filePath, "文件路径" + NOT_NULL_MSG);
+        checkFilePath(filePath, "文件路径");
         return readByteString(new File(filePath));
     }
 
@@ -130,7 +162,7 @@ public final class OkioUtils {
      * @creator pengjianqiang@2022年6月28日
      */
     public static ByteString readByteString(File file) {
-        CheckUtils.checkNotNull(file, "文件对象" + NOT_NULL_MSG);
+        checkFile(file, "文件对象");
         try {
             return readByteString(new FileInputStream(file));
         } catch (Exception e) {
@@ -147,7 +179,7 @@ public final class OkioUtils {
      * @creator pengjianqiang@2022年6月29日
      */
     public static ByteString readByteString(InputStream inputStream) {
-        CheckUtils.checkNotNull(inputStream, "文件流对象" + NOT_NULL_MSG);
+        checkObject(inputStream, "文件流对象");
         try (BufferedSource bufferedSource = Okio.buffer(Okio.source(inputStream))) {
             return bufferedSource.readByteString();
         } catch (Exception e) {
@@ -196,19 +228,9 @@ public final class OkioUtils {
      * @creator pengjianqiang@2022年6月28日
      */
     public static void copyFile(File srcFile, String srcFilePath, File destFile, String descFilePath) {
-        if (CheckUtils.isNull(srcFile)) {
-            CheckUtils.checkNotEmpty(srcFilePath, "源文件对象" + NOT_NULL_MSG);
-            srcFile = new File(srcFilePath);
-        }
-        if (CheckUtils.isNull(destFile)) {
-            CheckUtils.checkNotEmpty(descFilePath, "目标文件对象" + NOT_NULL_MSG);
-            destFile = new File(descFilePath);
-        }
-
-        destFile.getParentFile().mkdirs();
-
+        File[] files = checkSrcAndDestFile(srcFile, srcFilePath, destFile, descFilePath);
         try {
-            copy(Okio.source(srcFile), Okio.sink(destFile));
+            copy(Okio.source(files[0]), Okio.sink(files[1]));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -227,12 +249,62 @@ public final class OkioUtils {
      */
     public static void copyFile(File srcFile, String srcFilePath, OutputStream outputStream) {
         if (CheckUtils.isNull(srcFile)) {
-            CheckUtils.checkNotEmpty(srcFilePath, "源文件对象" + NOT_NULL_MSG);
+            checkFilePath(srcFilePath, "源文件对象");
             srcFile = new File(srcFilePath);
         }
-        CheckUtils.checkNotNull(outputStream, "输出流对象" + NOT_NULL_MSG);
+        checkFile(srcFile, "源文件对象");
+        checkObject(outputStream, "输出流对象");
         try {
             copy(Okio.source(srcFile), Okio.sink(outputStream));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * 移动文件(强制覆盖)
+     * 
+     * @param srcFile
+     *            源文件对象
+     * @param destFile
+     *            目标文件对象
+     * @creator pengjianqiang@2022年6月28日
+     */
+    public static void moveFile(File srcFile, File destFile) {
+        moveFile(srcFile, null, destFile, null);
+    }
+
+    /**
+     * 移动文件(强制覆盖)
+     * 
+     * @param srcFilePath
+     *            源文件路径
+     * @param descFilePath
+     *            目标文件路径
+     * @creator pengjianqiang@2022年6月28日
+     */
+    public static void moveFile(String srcFilePath, String descFilePath) {
+        moveFile(null, srcFilePath, null, descFilePath);
+    }
+
+    /**
+     * 移动文件(强制覆盖)<br>
+     * xxxFile为空时，从xxxFilePath获取文件对象<br>
+     * 
+     * @param srcFile
+     *            源文件对象
+     * @param srcFilePath
+     *            源文件路径
+     * @param destFile
+     *            目标文件对象
+     * @param descFilePath
+     *            目标文件路径
+     * @creator pengjianqiang@2022年6月28日
+     */
+    public static void moveFile(File srcFile, String srcFilePath, File destFile, String descFilePath) {
+        File[] files = checkSrcAndDestFile(srcFile, srcFilePath, destFile, descFilePath);
+        try {
+            Files.move(files[0].toPath(), files[1].toPath(), StandardCopyOption.ATOMIC_MOVE);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -248,8 +320,8 @@ public final class OkioUtils {
      * @creator pengjianqiang@2022年6月28日
      */
     public static void copyStream(InputStream inputStream, OutputStream outputStream) {
-        CheckUtils.checkNotNull(inputStream, "输入流对象" + NOT_NULL_MSG);
-        CheckUtils.checkNotNull(outputStream, "输出流对象" + NOT_NULL_MSG);
+        checkObject(inputStream, "输入流对象");
+        checkObject(outputStream, "输出流对象");
         copy(Okio.source(inputStream), Okio.sink(outputStream));
     }
 
@@ -257,10 +329,14 @@ public final class OkioUtils {
      * 把byteString输出到sink
      * 
      * @param byteString
+     *            源输入对象
      * @param sink
+     *            目标输出对象
      * @creator pengjianqiang@2022年6月29日
      */
     public static void copy(ByteString byteString, Sink sink) {
+        checkObject(byteString, "源输入对象");
+        checkObject(sink, "目标输出对象");
         try (BufferedSink bufferedSink = Okio.buffer(sink)) {
             bufferedSink.write(byteString.asByteBuffer());
         } catch (Exception e) {
@@ -272,10 +348,14 @@ public final class OkioUtils {
      * 直接把source输出到sink
      * 
      * @param source
+     *            源输入对象
      * @param sink
+     *            目标输出对象
      * @creator pengjianqiang@2022年6月29日
      */
     public static void copy(Source source, Sink sink) {
+        checkObject(source, "源输入对象");
+        checkObject(sink, "目标输出对象");
         try (BufferedSink bufferedSink = Okio.buffer(sink); BufferedSource bufferedSource = Okio.buffer(source)) {
             bufferedSink.writeAll(bufferedSource);
         } catch (Exception e) {
