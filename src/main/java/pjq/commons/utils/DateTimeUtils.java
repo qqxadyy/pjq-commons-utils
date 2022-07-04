@@ -549,13 +549,89 @@ public final class DateTimeUtils {
      * @return
      */
     public static int durationDays(LocalDate d1, LocalDate d2) {
-        //问题：Period.getDays只能获取相差的时间中的天数部分，但是相差的年份、月份获取不了，即getDays不是获取相差总天数，实际应用以下方式：
-        //方法1：Duration.between(LocaleDateTime d1,LocaleDateTime d2).getSeconds/toDays等
-        //方法2：ChronoUnit.SECONDS/DAYS等.between(LocaleDateTime d1,LocaleDateTime d2)
-        if (d1.isAfter(d2)) {
-            return new Long(ChronoUnit.DAYS.between(d2, d1)).intValue();
+        return duration(d1, d2, ChronoUnit.DAYS);
+    }
+
+    /**
+     * 获取两个日期对应单位的差值<br>
+     * 例如unit传入{@link ChronoUnit#YEARS}，表示计算相差的年数
+     *
+     * @param d1
+     * @param d2
+     * @param unit
+     *            只支持年(YEARS)、月(MONTHS)、日(DAYS)
+     * @return
+     */
+    public static int duration(LocalDate d1, LocalDate d2, ChronoUnit unit) {
+        CheckUtils.checkNotNull(unit, "单位不能为空");
+
+        boolean unitValid = true;
+        switch (unit) {
+            case DAYS:
+            case MONTHS:
+            case YEARS:
+                break;
+            default:
+                unitValid = false;
+        }
+        CheckUtils.checkNotFalse(unitValid, "只支持年(YEARS)、月(MONTHS)、日(DAYS)这几个单位的差值计算");
+
+        // 问题：Period.getDays只能获取相差的时间中的天数部分，但是相差的年份、月份获取不了，即getDays不是获取相差总天数，实际应用以下方式：
+        // 方法1：Duration.between(LocaleDateTime d1,LocaleDateTime d2).getSeconds/toDays等
+        // 方法2：ChronoUnit.SECONDS/DAYS等.between(LocaleDateTime d1,LocaleDateTime d2)
+        return Math.abs(new Long(unit.between(d1, d2)).intValue());
+    }
+
+    /**
+     * 获取两个日期相差的天数，并返回"Y年M个月D天"的字符串
+     * 
+     * @param d1
+     * @param d2
+     * @return
+     * @creator pengjianqiang@2022年7月3日
+     */
+    public static String durationYearMonthDay(LocalDate d1, LocalDate d2) {
+        int daysOfOneYear = 365;
+        int daysOfOneMonth = 30; // 大约取1个月30天
+        int totalDurationDays = durationDays(d1, d2);
+
+        int durationYears = 0;
+        int durationMonths = 0;
+        int durationDays = 0;
+        if (totalDurationDays >= daysOfOneYear) {
+            // 大于等于1年
+            int leftDaysOfYear = totalDurationDays % daysOfOneYear; // 取年份余数
+
+            durationYears = (totalDurationDays - leftDaysOfYear) / daysOfOneYear; // 年份余数/365=年数
+            if (leftDaysOfYear >= daysOfOneMonth) {
+                // 大于等于1月
+                int leftDaysOfMonth = leftDaysOfYear % daysOfOneMonth; // 取月份余数
+                durationMonths = (leftDaysOfYear - leftDaysOfMonth) / daysOfOneMonth; // 月份余数/30=月数
+
+                durationDays = leftDaysOfMonth;
+            } else {
+                // 小于1月
+                durationDays = leftDaysOfYear;
+            }
         } else {
-            return new Long(ChronoUnit.DAYS.between(d1, d2)).intValue();
+            // 小于1年
+            if (totalDurationDays >= daysOfOneMonth) {
+                // 大于等于1月
+                int leftDaysOfMonth = totalDurationDays % daysOfOneMonth; // 取月份余数
+                durationMonths = (totalDurationDays - leftDaysOfMonth) / daysOfOneMonth; // 月份余数/30=月数
+
+                durationDays = leftDaysOfMonth;
+            } else {
+                // 小于1月
+                durationDays = totalDurationDays;
+            }
+        }
+
+        if (durationYears == 0 && durationMonths == 0 && durationDays == 0) {
+            return "0天";
+        } else {
+            return (durationYears > 0 ? (durationYears + "年") : "")
+                + (durationMonths > 0 ? (durationMonths + "个月") : "") + (durationDays > 0 ? (durationDays + "天") : "");
         }
     }
 
@@ -589,11 +665,7 @@ public final class DateTimeUtils {
      * @return
      */
     public static long durationSeconds(LocalDateTime d1, LocalDateTime d2) {
-        if (d1.isAfter(d2)) {
-            return Duration.between(d2, d1).getSeconds();
-        } else {
-            return Duration.between(d1, d2).getSeconds();
-        }
+        return Math.abs(Duration.between(d1, d2).getSeconds());
     }
 
     /**
@@ -728,6 +800,8 @@ public final class DateTimeUtils {
      * @return
      */
     public static LocalDateTime plus(LocalDateTime dateTime, long amountToAdd, ChronoUnit unit) {
+        CheckUtils.checkNotNull(unit, "单位不能为空");
+
         dateTime = dateTime.withNano(0);
         switch (unit) {
             case SECONDS:
