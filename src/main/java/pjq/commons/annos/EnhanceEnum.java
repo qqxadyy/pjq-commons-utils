@@ -228,7 +228,7 @@ public interface EnhanceEnum {
     }
 
     /**
-     * 默认实现ValuableEnum的类，用于根据枚举值查找枚举类型
+     * 默认实现{@link EnhanceEnum}的类，用于根据枚举值查找枚举类型
      * 
      * @author pengjianqiang
      * @date 2021年2月7日
