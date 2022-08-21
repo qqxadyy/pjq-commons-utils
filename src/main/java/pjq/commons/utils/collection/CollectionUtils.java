@@ -201,7 +201,7 @@ public final class CollectionUtils {
     }
 
     /**
-     * 根据条件过滤集合
+     * 保留集合中符合条件的对象
      * 
      * @param <T>
      *            集合元素类型
@@ -220,7 +220,7 @@ public final class CollectionUtils {
     }
 
     /**
-     * 根据条件过滤map
+     * 保留map中符合条件的对象
      * 
      * @param <K>
      *            map的key元素类型
@@ -243,7 +243,7 @@ public final class CollectionUtils {
     }
 
     /**
-     * 根据条件过滤数组
+     * 保留数组中符合条件的对象
      * 
      * @param <T>
      *            数组元素类型
@@ -299,7 +299,7 @@ public final class CollectionUtils {
     }
 
     /**
-     * 根据条件过滤集合，并返回第一个符合条件的对象<br>
+     * 保留集合中符合条件的对象，并返回第一个符合条件的对象<br>
      * 当集合非有序时，返回结果不一定符合预期，根据实际情况判断
      * 
      * @param <T>
@@ -307,7 +307,7 @@ public final class CollectionUtils {
      * @param iterable
      *            集合
      * @param predicate
-     *            过滤条件，<code>t->{}</code>
+     *            过滤条件，<code>t->{}</code>，为空时相当于不过滤
      * @return 过滤后的第一个符合条件的对象，没有符合条件则返回null
      * @creator pengjianqiang@2021年4月20日
      */
@@ -316,7 +316,7 @@ public final class CollectionUtils {
     }
 
     /**
-     * 根据条件过滤map，并返回第一个符合条件的对象<br>
+     * 保留map中符合条件的对象，并返回第一个符合条件的对象<br>
      * 当map非有序时，返回结果不一定符合预期，根据实际情况判断
      * 
      * @param <K>
@@ -326,7 +326,7 @@ public final class CollectionUtils {
      * @param map
      *            集合
      * @param predicate
-     *            过滤条件，<code>t->{}</code>
+     *            过滤条件，<code>t->{}</code>，为空时相当于不过滤
      * @return 过滤后的第一个符合条件的对象，没有符合条件则返回null
      * @creator pengjianqiang@2021年4月20日
      */
@@ -334,6 +334,18 @@ public final class CollectionUtils {
         return first(filter(map, predicate));
     }
 
+    /**
+     * 保留数组中符合条件的对象，并返回第一个符合条件的对象
+     *
+     * @param <T>
+     *            数组元素类型
+     * @param array
+     *            集合
+     * @param predicate
+     *            过滤条件，<code>t->{}</code>，为空时相当于不过滤
+     * @return 过滤后的第一个符合条件的对象，没有符合条件则返回null
+     * @creator pengjianqiang@2021年4月20日
+     */
     public static <T> T filterOne(T[] array, Predicate<T> predicate) {
         return first(filter(array, predicate));
     }
