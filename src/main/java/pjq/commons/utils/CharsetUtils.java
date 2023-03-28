@@ -1,5 +1,5 @@
 /*
- * Copyright © 2021 pengjianqiang
+ * Copyright © 2023 pengjianqiang
  * All rights reserved.
  * 项目名称：pjq-commons-utils
  * 项目描述：pjq-commons-utils
@@ -9,7 +9,7 @@
  * ======================================================================
  *
  * The MIT License
- * Copyright © 2021 pengjianqiang
+ * Copyright © 2023 pengjianqiang
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal

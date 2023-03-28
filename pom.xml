@@ -107,10 +107,11 @@
 				</configuration>
 				<executions>
 					<execution>
+						<!-- mvn license:对应goal -->
 						<goals>
 							<goal>check</goal> <!-- 检查某些源文件中是否缺少头信息 -->
 							<goal>remove</goal> <!-- 删除现有的头信息 -->
-							<goal>format</goal> <!-- 如果缺少则头信息 -->
+							<goal>format</goal> <!-- 如果缺少则添加头信息 -->
 						</goals>
 					</execution>
 				</executions>
