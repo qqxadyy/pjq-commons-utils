@@ -53,8 +53,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class CheckUtils {
     public static boolean isEmpty(String str) {
-        String invisibleChar = "\u200b|\u200B"; // 该字符串是不可见的，控制台等打印不出，但是有实际长度
-        String ns = null == str ? null : new String(str).trim().replaceAll(invisibleChar, "");
+        // u200b字符串是不可见的，控制台等打印不出，但是有实际长度
+        // "　"编码是12288，按空格处理
+        String invisibleChar = "\u200b|\u200B|　";
+        String ns = (null == str ? null : str.trim().replaceAll(invisibleChar, ""));
         return StringUtils.isBlank(ns) || "null".equalsIgnoreCase(ns) || "undefined".equalsIgnoreCase(ns);
     }
 
@@ -80,7 +82,7 @@ public final class CheckUtils {
 
     public static boolean isEmpty(Object[] array) {
         if (array instanceof String[]) {
-            return areEmpty((String[])array);
+            return areEmpty((String[]) array);
         } else {
             return ArrayUtils.isEmpty(array);
         }
@@ -152,15 +154,15 @@ public final class CheckUtils {
 
     /**
      * 判断字符串是否为空，为空时抛异常
-     * 
+     *
      * @param str
      * @param msg
      * @param exceptionFunc
-     *            为空时默认抛出{@link RuntimeException}，否则抛出指定的异常类型
+     *         为空时默认抛出{@link RuntimeException}，否则抛出指定的异常类型
      */
     @SafeVarargs
     public static void checkNotEmpty(String str, String msg,
-        Function<String, ? extends RuntimeException>... exceptionFunc) {
+                                     Function<String, ? extends RuntimeException>... exceptionFunc) {
         if (isEmpty(str)) {
             throw exceptionGetter(exceptionFunc).apply(msg);
         }
@@ -168,7 +170,7 @@ public final class CheckUtils {
 
     @SafeVarargs
     public static void checkNotNull(Object obj, String msg,
-        Function<String, ? extends RuntimeException>... exceptionFunc) {
+                                    Function<String, ? extends RuntimeException>... exceptionFunc) {
         if (isNull(obj)) {
             throw exceptionGetter(exceptionFunc).apply(msg);
         }
@@ -176,7 +178,7 @@ public final class CheckUtils {
 
     @SafeVarargs
     public static void checkNotEmpty(Collection<?> collection, String msg,
-        Function<String, ? extends RuntimeException>... exceptionFunc) {
+                                     Function<String, ? extends RuntimeException>... exceptionFunc) {
         if (isEmpty(collection)) {
             throw exceptionGetter(exceptionFunc).apply(msg);
         }
@@ -184,7 +186,7 @@ public final class CheckUtils {
 
     @SafeVarargs
     public static void checkNotEmpty(Map<?, ?> map, String msg,
-        Function<String, ? extends RuntimeException>... exceptionFunc) {
+                                     Function<String, ? extends RuntimeException>... exceptionFunc) {
         if (isEmpty(map)) {
             throw exceptionGetter(exceptionFunc).apply(msg);
         }
@@ -192,7 +194,7 @@ public final class CheckUtils {
 
     @SafeVarargs
     public static void checkNotEmpty(Object[] array, String msg,
-        Function<String, ? extends RuntimeException>... exceptionFunc) {
+                                     Function<String, ? extends RuntimeException>... exceptionFunc) {
         if (isEmpty(array)) {
             throw exceptionGetter(exceptionFunc).apply(msg);
         }
@@ -200,7 +202,7 @@ public final class CheckUtils {
 
     @SafeVarargs
     public static void checkNotFalse(boolean boolVal, String msg,
-        Function<String, ? extends RuntimeException>... exceptionFunc) {
+                                     Function<String, ? extends RuntimeException>... exceptionFunc) {
         if (!boolVal) {
             throw exceptionGetter(exceptionFunc).apply(msg);
         }
@@ -208,17 +210,17 @@ public final class CheckUtils {
 
     @SafeVarargs
     public static void checkNotTrue(boolean boolVal, String msg,
-        Function<String, ? extends RuntimeException>... exceptionFunc) {
+                                    Function<String, ? extends RuntimeException>... exceptionFunc) {
         if (boolVal) {
             throw exceptionGetter(exceptionFunc).apply(msg);
         }
     }
 
     @SafeVarargs
-    private static Function<String, ? extends RuntimeException>
-        exceptionGetter(Function<String, ? extends RuntimeException>... exceptionFunc) {
-        Supplier<Function<String, ? extends RuntimeException>> defaultExceptionGetter =
-            () -> (msg -> new RuntimeException(msg));
+    private static Function<String, ? extends RuntimeException> exceptionGetter(
+            Function<String, ? extends RuntimeException>... exceptionFunc) {
+        Supplier<Function<String, ? extends RuntimeException>> defaultExceptionGetter = () -> (msg -> new RuntimeException(
+                msg));
         return DefaultValueGetter.get(defaultExceptionGetter, exceptionFunc);
     }
 }
