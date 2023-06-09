@@ -2,7 +2,7 @@
  * Copyright © 2023 pengjianqiang
  * All rights reserved.
  * 项目名称：pjq-commons-utils
- * 项目描述：pjq-commons-utils
+ * 项目描述：个人整理的工具类
  * 项目地址：https://github.com/qqxadyy/pjq-commons-utils
  * 许可证信息：见下文
  *
@@ -95,7 +95,7 @@ public final class OkioUtils {
      * @param filePath
      *            文件路径
      * @return
-     * @creator pengjianqiang@2022年6月28日
+     * @author pengjianqiang@2022年6月28日
      */
     public static List<String> readLines(String filePath) {
         checkFilePath(filePath, "文件路径");
@@ -108,7 +108,7 @@ public final class OkioUtils {
      * @param file
      *            文件对象
      * @return
-     * @creator pengjianqiang@2022年6月28日
+     * @author pengjianqiang@2022年6月28日
      */
     public static List<String> readLines(File file) {
         checkFile(file, "文件对象");
@@ -125,7 +125,7 @@ public final class OkioUtils {
      * @param inputStream
      *            输入流对象
      * @return
-     * @creator pengjianqiang@2022年6月28日
+     * @author pengjianqiang@2022年6月28日
      */
     public static List<String> readLines(InputStream inputStream) {
         checkObject(inputStream, "文件流对象");
@@ -146,7 +146,7 @@ public final class OkioUtils {
      * @param filePath
      *            文件路径
      * @return
-     * @creator pengjianqiang@2022年6月28日
+     * @author pengjianqiang@2022年6月28日
      */
     public static ByteString readByteString(String filePath) {
         checkFilePath(filePath, "文件路径");
@@ -159,7 +159,7 @@ public final class OkioUtils {
      * @param file
      *            文件对象
      * @return
-     * @creator pengjianqiang@2022年6月28日
+     * @author pengjianqiang@2022年6月28日
      */
     public static ByteString readByteString(File file) {
         checkFile(file, "文件对象");
@@ -176,7 +176,7 @@ public final class OkioUtils {
      * @param inputStream
      *            输入流对象
      * @return
-     * @creator pengjianqiang@2022年6月29日
+     * @author pengjianqiang@2022年6月29日
      */
     public static ByteString readByteString(InputStream inputStream) {
         checkObject(inputStream, "文件流对象");
@@ -194,7 +194,7 @@ public final class OkioUtils {
      *            源文件对象
      * @param destFile
      *            目标文件对象
-     * @creator pengjianqiang@2022年6月28日
+     * @author pengjianqiang@2022年6月28日
      */
     public static void copyFile(File srcFile, File destFile) {
         copyFile(srcFile, null, destFile, null);
@@ -207,7 +207,7 @@ public final class OkioUtils {
      *            源文件路径
      * @param descFilePath
      *            目标文件路径
-     * @creator pengjianqiang@2022年6月28日
+     * @author pengjianqiang@2022年6月28日
      */
     public static void copyFile(String srcFilePath, String descFilePath) {
         copyFile(null, srcFilePath, null, descFilePath);
@@ -225,7 +225,7 @@ public final class OkioUtils {
      *            目标文件对象
      * @param descFilePath
      *            目标文件路径
-     * @creator pengjianqiang@2022年6月28日
+     * @author pengjianqiang@2022年6月28日
      */
     public static void copyFile(File srcFile, String srcFilePath, File destFile, String descFilePath) {
         File[] files = checkSrcAndDestFile(srcFile, srcFilePath, destFile, descFilePath);
@@ -245,7 +245,7 @@ public final class OkioUtils {
      *            源文件路径
      * @param outputStream
      *            输出流对象
-     * @creator pengjianqiang@2022年6月28日
+     * @author pengjianqiang@2022年6月28日
      */
     public static void copyFile(File srcFile, String srcFilePath, OutputStream outputStream) {
         if (CheckUtils.isNull(srcFile)) {
@@ -268,7 +268,7 @@ public final class OkioUtils {
      *            源文件对象
      * @param destFile
      *            目标文件对象
-     * @creator pengjianqiang@2022年6月28日
+     * @author pengjianqiang@2022年6月28日
      */
     public static void moveFile(File srcFile, File destFile) {
         moveFile(srcFile, null, destFile, null);
@@ -281,7 +281,7 @@ public final class OkioUtils {
      *            源文件路径
      * @param descFilePath
      *            目标文件路径
-     * @creator pengjianqiang@2022年6月28日
+     * @author pengjianqiang@2022年6月28日
      */
     public static void moveFile(String srcFilePath, String descFilePath) {
         moveFile(null, srcFilePath, null, descFilePath);
@@ -299,7 +299,7 @@ public final class OkioUtils {
      *            目标文件对象
      * @param descFilePath
      *            目标文件路径
-     * @creator pengjianqiang@2022年6月28日
+     * @author pengjianqiang@2022年6月28日
      */
     public static void moveFile(File srcFile, String srcFilePath, File destFile, String descFilePath) {
         File[] files = checkSrcAndDestFile(srcFile, srcFilePath, destFile, descFilePath);
@@ -317,7 +317,7 @@ public final class OkioUtils {
      *            输入流对象
      * @param outputStream
      *            输出流对象
-     * @creator pengjianqiang@2022年6月28日
+     * @author pengjianqiang@2022年6月28日
      */
     public static void copyStream(InputStream inputStream, OutputStream outputStream) {
         checkObject(inputStream, "输入流对象");
@@ -332,7 +332,7 @@ public final class OkioUtils {
      *            源输入对象
      * @param sink
      *            目标输出对象
-     * @creator pengjianqiang@2022年6月29日
+     * @author pengjianqiang@2022年6月29日
      */
     public static void copy(ByteString byteString, Sink sink) {
         checkObject(byteString, "源输入对象");
@@ -351,7 +351,7 @@ public final class OkioUtils {
      *            源输入对象
      * @param sink
      *            目标输出对象
-     * @creator pengjianqiang@2022年6月29日
+     * @author pengjianqiang@2022年6月29日
      */
     public static void copy(Source source, Sink sink) {
         checkObject(source, "源输入对象");

@@ -2,7 +2,7 @@
  * Copyright © 2023 pengjianqiang
  * All rights reserved.
  * 项目名称：pjq-commons-utils
- * 项目描述：pjq-commons-utils
+ * 项目描述：个人整理的工具类
  * 项目地址：https://github.com/qqxadyy/pjq-commons-utils
  * 许可证信息：见下文
  *
@@ -91,7 +91,7 @@ public enum DateTimePattern implements EnhanceEnum {
      * 常用的时间格式列表
      * 
      * @return
-     * @creator pengjianqiang@2021年3月10日
+     * @author pengjianqiang@2021年3月10日
      */
     public static List<DateTimePattern> usuallyUseDateTimePattern() {
         return Arrays.asList(PATTERN_DEFAULT, PATTERN_DATE_COMPACT, PATTERN_DATETIME, PATTERN_DATETIME_COMPACT);

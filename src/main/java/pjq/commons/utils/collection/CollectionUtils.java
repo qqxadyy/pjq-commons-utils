@@ -2,7 +2,7 @@
  * Copyright © 2023 pengjianqiang
  * All rights reserved.
  * 项目名称：pjq-commons-utils
- * 项目描述：pjq-commons-utils
+ * 项目描述：个人整理的工具类
  * 项目地址：https://github.com/qqxadyy/pjq-commons-utils
  * 许可证信息：见下文
  *
@@ -78,7 +78,7 @@ public final class CollectionUtils {
      *            集合
      * @param action
      *            遍历操作，<code>e->{}</code>
-     * @creator pengjianqiang@2021年4月20日
+     * @author pengjianqiang@2021年4月20日
      */
     public static <T> void forEach(Iterable<T> iterable, Consumer<T> action) {
         forEachCommon(iterable, action);
@@ -95,13 +95,16 @@ public final class CollectionUtils {
      *            集合
      * @param action
      *            遍历操作，<code>(e,index)->{}</code>
-     * @creator pengjianqiang@2021年4月20日
+     * @author pengjianqiang@2021年4月20日
      */
     public static <T> void forEach(Iterable<T> iterable, BiConsumer<T, Integer> action) {
         forEachCommon(iterable, action);
     }
 
     public static <K, V> void forEach(Map<K, V> map, Consumer<Entry<K, V>> action) {
+        if (CheckUtils.isEmpty(map)) {
+            return;
+        }
         forEachCommon(map.entrySet(), action);
     }
 
@@ -118,9 +121,12 @@ public final class CollectionUtils {
      *            map集合
      * @param action
      *            遍历操作，<code>(entry,index)->{}</code>
-     * @creator pengjianqiang@2021年4月20日
+     * @author pengjianqiang@2021年4月20日
      */
     public static <K, V> void forEach(Map<K, V> map, BiConsumer<Entry<K, V>, Integer> action) {
+        if (CheckUtils.isEmpty(map)) {
+            return;
+        }
         forEachCommon(map.entrySet(), action);
     }
 
@@ -210,7 +216,7 @@ public final class CollectionUtils {
      * @param predicate
      *            过滤条件，<code>t->{}</code>，为空时相当于不过滤
      * @return 过滤后的list，没有符合条件则返回空list
-     * @creator pengjianqiang@2021年4月20日
+     * @author pengjianqiang@2021年4月20日
      */
     public static <T> List<T> filter(Iterable<T> iterable, Predicate<T> predicate) {
         if (CheckUtils.isNull(iterable)) {
@@ -231,7 +237,7 @@ public final class CollectionUtils {
      * @param predicate
      *            过滤条件，<code>entry->{}</code>，为空时相当于不过滤
      * @return 过滤后的map，没有符合条件则返回空map
-     * @creator pengjianqiang@2021年4月20日
+     * @author pengjianqiang@2021年4月20日
      */
     public static <K, V> Map<K, V> filter(Map<K, V> map, Predicate<Entry<K, V>> predicate) {
         if (CheckUtils.isEmpty(map)) {
@@ -252,7 +258,7 @@ public final class CollectionUtils {
      * @param predicate
      *            过滤条件，<code>t->{}</code>，为空时相当于不过滤
      * @return 过滤后的数组，没有符合条件则返回空数组(注：array==null时返回null)
-     * @creator pengjianqiang@2021年4月20日
+     * @author pengjianqiang@2021年4月20日
      */
     @SuppressWarnings("unchecked")
     public static <T> T[] filter(T[] array, Predicate<? super T> predicate) {
@@ -274,7 +280,7 @@ public final class CollectionUtils {
      * @param predicate
      *            过滤条件，<code>t->{}</code>，为空时相当于不过滤
      * @return
-     * @creator pengjianqiang@2021年4月20日
+     * @author pengjianqiang@2021年4月20日
      */
     private static <T> Stream<T> filterStream(Stream<T> stream, Predicate<? super T> predicate) {
         return stream.filter(mergeNotNullPredicate(predicate));
@@ -288,7 +294,7 @@ public final class CollectionUtils {
      * @param predicate
      *            过滤元素用的过滤条件
      * @return
-     * @creator pengjianqiang@2022年6月28日
+     * @author pengjianqiang@2022年6月28日
      */
     @SafeVarargs
     private static <T> Predicate<? super T> mergeNotNullPredicate(Predicate<? super T>... predicate) {
@@ -309,7 +315,7 @@ public final class CollectionUtils {
      * @param predicate
      *            过滤条件，<code>t->{}</code>，为空时相当于不过滤
      * @return 过滤后的第一个符合条件的对象，没有符合条件则返回null
-     * @creator pengjianqiang@2021年4月20日
+     * @author pengjianqiang@2021年4月20日
      */
     public static <T> T filterOne(Iterable<T> iterable, Predicate<T> predicate) {
         return first(filter(iterable, predicate));
@@ -328,7 +334,7 @@ public final class CollectionUtils {
      * @param predicate
      *            过滤条件，<code>t->{}</code>，为空时相当于不过滤
      * @return 过滤后的第一个符合条件的对象，没有符合条件则返回null
-     * @creator pengjianqiang@2021年4月20日
+     * @author pengjianqiang@2021年4月20日
      */
     public static <K, V> Map<K, V> filterOne(Map<K, V> map, Predicate<Entry<K, V>> predicate) {
         return first(filter(map, predicate));
@@ -344,7 +350,7 @@ public final class CollectionUtils {
      * @param predicate
      *            过滤条件，<code>t->{}</code>，为空时相当于不过滤
      * @return 过滤后的第一个符合条件的对象，没有符合条件则返回null
-     * @creator pengjianqiang@2021年4月20日
+     * @author pengjianqiang@2021年4月20日
      */
     public static <T> T filterOne(T[] array, Predicate<T> predicate) {
         return first(filter(array, predicate));
@@ -359,7 +365,7 @@ public final class CollectionUtils {
      * @param iterable
      *            集合
      * @return 集合的第一个对象，集合为空则返回null
-     * @creator pengjianqiang@2021年4月20日
+     * @author pengjianqiang@2021年4月20日
      */
     public static <T> T first(Iterable<T> iterable) {
         if (CheckUtils.isNull(iterable)) {
@@ -381,7 +387,7 @@ public final class CollectionUtils {
      * @param iterable
      *            集合
      * @return 集合的最后一个对象，集合为空则返回null
-     * @creator pengjianqiang@2021年4月20日
+     * @author pengjianqiang@2021年4月20日
      */
     public static <T> T last(Iterable<T> iterable) {
         if (CheckUtils.isNull(iterable)) {
@@ -406,7 +412,7 @@ public final class CollectionUtils {
      * @param map
      *            集合
      * @return 集合的第一个对象，集合为空则返回null
-     * @creator pengjianqiang@2021年4月20日
+     * @author pengjianqiang@2021年4月20日
      */
     public static <K, V> Map<K, V> first(Map<K, V> map) {
         if (CheckUtils.isEmpty(map)) {
@@ -429,7 +435,7 @@ public final class CollectionUtils {
      * @param map
      *            集合
      * @return 集合的最后一个对象，集合为空则返回null
-     * @creator pengjianqiang@2021年4月20日
+     * @author pengjianqiang@2021年4月20日
      */
     public static <K, V> Map<K, V> last(Map<K, V> map) {
         if (CheckUtils.isEmpty(map)) {
@@ -467,7 +473,7 @@ public final class CollectionUtils {
      * @param predicate
      *            过滤条件，满足该条件的元素才会被转换
      * @return 目标list
-     * @creator pengjianqiang@2021年4月20日
+     * @author pengjianqiang@2021年4月20日
      */
     @SafeVarargs
     public static <S, T> List<T> transformToList(Iterable<S> iterable, Function<S, T> mapper,
@@ -495,7 +501,7 @@ public final class CollectionUtils {
      * @param predicate
      *            过滤条件，满足该条件的元素才会被转换
      * @return 目标list
-     * @creator pengjianqiang@2021年4月20日
+     * @author pengjianqiang@2021年4月20日
      */
     @SafeVarargs
     public static <K, V, T> List<T> transformToList(Map<K, V> map, Function<Entry<K, V>, T> mapper,
@@ -520,7 +526,7 @@ public final class CollectionUtils {
      * @param predicate
      *            过滤条件，满足该条件的元素才会被转换
      * @return 目标list
-     * @creator pengjianqiang@2021年4月20日
+     * @author pengjianqiang@2021年4月20日
      */
     @SafeVarargs
     public static <S, T> List<T> transformToList(S[] array, Function<S, T> mapper, Predicate<S>... predicate) {
@@ -544,7 +550,7 @@ public final class CollectionUtils {
      * @param predicate
      *            过滤条件，满足该条件的元素才会被转换
      * @return 目标list
-     * @creator pengjianqiang@2021年4月20日
+     * @author pengjianqiang@2021年4月20日
      */
     @SafeVarargs
     public static <S, T> List<T> transformToList(Stream<S> stream, Function<S, T> mapper, Predicate<S>... predicate) {
@@ -571,7 +577,7 @@ public final class CollectionUtils {
      * @param predicate
      *            过滤条件，满足该条件的元素才会被转换
      * @return 目标set
-     * @creator pengjianqiang@2022年6月28日
+     * @author pengjianqiang@2022年6月28日
      */
     @SafeVarargs
     public static <S, T> Set<T> transformToSet(Iterable<S> iterable, Function<S, T> mapper, Predicate<S>... predicate) {
@@ -594,7 +600,7 @@ public final class CollectionUtils {
      * @param predicate
      *            过滤条件，满足该条件的元素才会被转换
      * @return 目标set
-     * @creator pengjianqiang@2022年6月28日
+     * @author pengjianqiang@2022年6月28日
      */
     @SafeVarargs
     public static <K, V, T> Set<T> transformToSet(Map<K, V> map, Function<Entry<K, V>, T> mapper,
@@ -616,7 +622,7 @@ public final class CollectionUtils {
      * @param predicate
      *            过滤条件，满足该条件的元素才会被转换
      * @return 目标set
-     * @creator pengjianqiang@2021年4月20日
+     * @author pengjianqiang@2021年4月20日
      */
     @SafeVarargs
     public static <S, T> Set<T> transformToSet(S[] array, Function<S, T> mapper, Predicate<S>... predicate) {
@@ -637,7 +643,7 @@ public final class CollectionUtils {
      * @param predicate
      *            过滤条件，满足该条件的元素才会被转换
      * @return 目标set
-     * @creator pengjianqiang@2021年4月20日
+     * @author pengjianqiang@2021年4月20日
      */
     @SafeVarargs
     public static <S, T> Set<T> transformToSet(Stream<S> stream, Function<S, T> mapper, Predicate<S>... predicate) {
@@ -663,7 +669,7 @@ public final class CollectionUtils {
      * @param predicate
      *            过滤条件，满足该条件的元素才会被转换
      * @return 目标map
-     * @creator pengjianqiang@2021年4月20日
+     * @author pengjianqiang@2021年4月20日
      */
     @SafeVarargs
     public static <S, K, V> Map<K, V> transformToMap(Iterable<S> iterable, Function<S, K> keyMapper,
@@ -696,7 +702,7 @@ public final class CollectionUtils {
      * @param predicate
      *            过滤条件，满足该条件的元素才会被转换
      * @return 目标map
-     * @creator pengjianqiang@2021年5月11日
+     * @author pengjianqiang@2021年5月11日
      */
     @SafeVarargs
     public static <SK, SV, K, V> Map<K, V> transformToMap(Map<SK, SV> map, Function<Entry<SK, SV>, K> keyMapper,
@@ -735,7 +741,7 @@ public final class CollectionUtils {
      * @param predicate
      *            过滤条件，满足该条件的元素才会被转换
      * @return 目标map
-     * @creator pengjianqiang@2021年4月20日
+     * @author pengjianqiang@2021年4月20日
      */
     @SafeVarargs
     public static <S, K, V> Map<K, V> transformToMap(S[] array, Function<S, K> keyMapper, Function<S, V> valueMapper,
@@ -765,7 +771,7 @@ public final class CollectionUtils {
      * @param predicate
      *            过滤条件，满足该条件的元素才会被转换
      * @return 目标map
-     * @creator pengjianqiang@2021年4月20日
+     * @author pengjianqiang@2021年4月20日
      */
     @SafeVarargs
     public static <S, K, V> Map<K, V> transformToMap(Stream<S> stream, Function<S, K> keyMapper,
@@ -786,9 +792,12 @@ public final class CollectionUtils {
      *            源集合元素类型
      * @param collection
      *            要移除Null的集合
-     * @creator pengjianqiang@2022年6月28日
+     * @author pengjianqiang@2022年6月28日
      */
     public static <S> void removeNull(Collection<S> collection) {
+        if (CheckUtils.isEmpty(collection)) {
+            return;
+        }
         collection.removeIf(CheckUtils::isNull);
     }
 
@@ -801,9 +810,12 @@ public final class CollectionUtils {
      *            map的value元素类型
      * @param map
      *            要移除Null的map
-     * @creator pengjianqiang@2022年6月28日
+     * @author pengjianqiang@2022年6月28日
      */
     public static <K, V> void removeNull(Map<K, V> map) {
+        if (CheckUtils.isEmpty(map)) {
+            return;
+        }
         map.remove(null, null);
     }
 
@@ -815,7 +827,7 @@ public final class CollectionUtils {
      * @param objectToFind
      *            目标对象
      * @return 下标值，找不到时返回-1
-     * @creator pengjianqiang@2021年4月27日
+     * @author pengjianqiang@2021年4月27日
      */
     public static int indexOf(Object[] array, Object objectToFind) {
         return ArrayUtils.indexOf(array, objectToFind);

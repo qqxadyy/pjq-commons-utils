@@ -2,7 +2,7 @@
  * Copyright © 2023 pengjianqiang
  * All rights reserved.
  * 项目名称：pjq-commons-utils
- * 项目描述：pjq-commons-utils
+ * 项目描述：个人整理的工具类
  * 项目地址：https://github.com/qqxadyy/pjq-commons-utils
  * 许可证信息：见下文
  *
@@ -43,16 +43,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
-import jakarta.ws.rs.core.MediaType;
 
 import org.apache.tika.Tika;
-
 import com.alibaba.fastjson.JSON;
 
 import lombok.AllArgsConstructor;
@@ -437,8 +434,8 @@ public abstract class OKHttpSenderBase {
             }
 
             okhttp3.MediaType meidaType =
-                okhttp3.MediaType.parse((ParamDataType.XML.equals(paramDataType) ? MediaType.APPLICATION_XML
-                    : (ParamDataType.JSON.equals(paramDataType) ? MediaType.APPLICATION_JSON : MediaType.TEXT_PLAIN))
+                okhttp3.MediaType.parse((ParamDataType.XML.equals(paramDataType) ? "application/xml"
+                    : (ParamDataType.JSON.equals(paramDataType) ? "application/json" : "text/plain"))
                     + "; charset=" + truePararmCharset);
             RequestBody requestBody = RequestBody.create(paramData, meidaType);
             log.info("request{}========>{}", paramDataType, paramData);
@@ -485,7 +482,7 @@ public abstract class OKHttpSenderBase {
         }
 
         builder.removeHeader(HEADER_CONTENT_TYPE); // 保证只有一个该header值
-        builder.addHeader(HEADER_CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED);// 必须加这句，否则有些服务器获取不了参数
+        builder.addHeader(HEADER_CONTENT_TYPE, "application/x-www-form-urlencoded");// 必须加这句，否则有些服务器获取不了参数
         builder.post(requestBody);
     }
 

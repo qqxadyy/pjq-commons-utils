@@ -1,4 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
@@ -10,7 +12,7 @@
 	<artifactId>pjq-commons-utils</artifactId>
 	<version>1.3.3-SNAPSHOT</version>
 	<name>pjq-commons-utils</name>
-	<description>pjq-commons-utils</description>
+	<description>个人整理的工具类</description>
 	<inceptionYear>2023</inceptionYear>
 	<url>https://github.com/qqxadyy/pjq-commons-utils</url>
 	<licenses>
@@ -68,11 +70,6 @@
 			<groupId>org.jetbrains.kotlin</groupId>
 			<artifactId>kotlin-stdlib-jdk8</artifactId>
 		</dependency>
-
-		<dependency>
-			<groupId>jakarta.ws.rs</groupId>
-			<artifactId>jakarta.ws.rs-api</artifactId>
-		</dependency>
 	</dependencies>
 
 	<build>
@@ -97,6 +94,7 @@
 								<exclude>src/test/java/**</exclude>
 								<exclude>src/test/resources/**</exclude>
 								<exclude>src/main/resources/**</exclude>
+								<exclude>**/package.info</exclude>
 							</excludes>
 						</licenseSet>
 					</licenseSets>
@@ -207,15 +205,4 @@
 			</plugin>
 		</plugins>
 	</build>
-
-	<distributionManagement>
-		<snapshotRepository>
-			<id>sonatype-nexus</id>
-			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
-		</snapshotRepository>
-		<repository>
-			<id>sonatype-nexus</id>
-			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
-		</repository>
-	</distributionManagement>
 </project>
