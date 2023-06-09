@@ -2,7 +2,7 @@
  * Copyright © 2023 pengjianqiang
  * All rights reserved.
  * 项目名称：pjq-commons-utils
- * 项目描述：pjq-commons-utils
+ * 项目描述：个人整理的工具类
  * 项目地址：https://github.com/qqxadyy/pjq-commons-utils
  * 许可证信息：见下文
  *
@@ -245,7 +245,7 @@ public interface EnhanceEnum {
          * @param valueOrName
          *            枚举类的值/名
          * @return 枚举对象
-         * @creator pengjianqiang@2021年4月20日
+         * @author pengjianqiang@2021年4月20日
          */
         @SuppressWarnings("unchecked")
         public static <T extends Enum<T>> T valueOrNameOf(String enumTypeName, String valueOrName) {
@@ -270,7 +270,7 @@ public interface EnhanceEnum {
          * @param valueOrName
          *            枚举类的值/名
          * @return 枚举对象
-         * @creator pengjianqiang@2021年4月20日
+         * @author pengjianqiang@2021年4月20日
          */
         public static <T extends Enum<T>> T valueOrNameOf(Class<T> enumType, String valueOrName) {
             if (CheckUtils.isNull(enumType) || CheckUtils.isEmpty(valueOrName)) {
@@ -306,7 +306,7 @@ public interface EnhanceEnum {
          * @param valueOrName
          *            枚举类的值/名
          * @return true/false
-         * @creator pengjianqiang@2021年4月20日
+         * @author pengjianqiang@2021年4月20日
          */
         public static <T extends Enum<T>> boolean isEnumOf(Class<T> enumType, String valueOrName) {
             try {

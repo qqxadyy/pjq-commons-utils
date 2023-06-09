@@ -2,7 +2,7 @@
  * Copyright © 2023 pengjianqiang
  * All rights reserved.
  * 项目名称：pjq-commons-utils
- * 项目描述：pjq-commons-utils
+ * 项目描述：个人整理的工具类
  * 项目地址：https://github.com/qqxadyy/pjq-commons-utils
  * 许可证信息：见下文
  *
@@ -63,7 +63,7 @@ public final class EnhanceCheckUtils {
      * 返回组合条件的判断结果
      * 
      * @return
-     * @creator pengjianqiang@2022年6月27日
+     * @author pengjianqiang@2022年6月27日
      */
     public boolean test() {
         return DefaultValueGetter.getValue(false, this.boolVal);
@@ -73,7 +73,7 @@ public final class EnhanceCheckUtils {
      * 当组合条件判断为true时执行对应逻辑，为false时不执行
      * 
      * @param doIfTrue
-     * @creator pengjianqiang@2022年6月27日
+     * @author pengjianqiang@2022年6月27日
      */
     public void exec(NoParamConsumer doIfTrue) {
         exec(doIfTrue, null);
@@ -84,11 +84,14 @@ public final class EnhanceCheckUtils {
      * 
      * @param doIfTrue
      * @param doIfFalse
-     * @creator pengjianqiang@2022年6月27日
+     * @author pengjianqiang@2022年6月27日
      */
     public void exec(NoParamConsumer doIfTrue, NoParamConsumer doIfFalse) {
-        DefaultValueGetter.get(() -> (() -> {
-        }), (test() ? doIfTrue : doIfFalse)).accept();
+        DefaultValueGetter.get(() -> new NoParamConsumer() {
+            @Override
+            public void accept() {
+            }
+        }, (test() ? doIfTrue : doIfFalse)).accept();
     }
 
     /**
@@ -97,7 +100,7 @@ public final class EnhanceCheckUtils {
      * @param <T>
      * @param objIfTrue
      * @return
-     * @creator pengjianqiang@2022年6月27日
+     * @author pengjianqiang@2022年6月27日
      */
     public <T> T get(Supplier<T> objIfTrue) {
         return get(objIfTrue, null);
@@ -110,11 +113,15 @@ public final class EnhanceCheckUtils {
      * @param objIfTrue
      * @param objIfFalse
      * @return
-     * @creator pengjianqiang@2022年6月27日
+     * @author pengjianqiang@2022年6月27日
      */
     public <T> T get(Supplier<T> objIfTrue, Supplier<T> objIfFalse) {
-        // "() -> (() -> null)"表示一个返回null的Supplier
-        return DefaultValueGetter.get(() -> (() -> null), (test() ? objIfTrue : objIfFalse)).get();
+        return DefaultValueGetter.get(() -> new Supplier<T>() {
+            @Override
+            public T get() {
+                return null;
+            }
+        }, (test() ? objIfTrue : objIfFalse)).get();
     }
 
     public EnhanceCheckUtils and(boolean boolVal) {

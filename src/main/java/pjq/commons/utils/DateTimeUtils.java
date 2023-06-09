@@ -2,7 +2,7 @@
  * Copyright © 2023 pengjianqiang
  * All rights reserved.
  * 项目名称：pjq-commons-utils
- * 项目描述：pjq-commons-utils
+ * 项目描述：个人整理的工具类
  * 项目地址：https://github.com/qqxadyy/pjq-commons-utils
  * 许可证信息：见下文
  *
@@ -588,7 +588,7 @@ public final class DateTimeUtils {
      * @param d1
      * @param d2
      * @return
-     * @creator pengjianqiang@2022年7月3日
+     * @author pengjianqiang@2022年7月3日
      */
     public static String durationYearMonthDay(LocalDate d1, LocalDate d2) {
         int daysOfOneYear = 365;
