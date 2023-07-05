@@ -31,6 +31,7 @@
  */
 package pjq.commons.annos;
 
+import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -57,6 +58,7 @@ public interface EnhanceEnum {
      */
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.TYPE)
+    @Documented
     @interface EnhanceEnumFieldDefine {
         /**
          * 获取枚举值的属性名，默认为value
