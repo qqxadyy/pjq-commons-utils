@@ -32,6 +32,7 @@
 package pjq.commons.utils;
 
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -51,7 +52,7 @@ public final class CharsetUtils {
     public static final String ISO_8859_1 = "ISO-8859-1";
 
     public static Charset utf8() {
-        return forName(UTF_8);
+        return StandardCharsets.UTF_8;
     }
 
     public static Charset gbk() {
@@ -67,7 +68,7 @@ public final class CharsetUtils {
     }
 
     public static Charset iso8859_1() {
-        return forName(ISO_8859_1);
+        return StandardCharsets.ISO_8859_1;
     }
 
     public static Charset forName(String charsetName) {

@@ -29,58 +29,23 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package pjq.commons.utils;
+package pjq.commons.utils.crypto;
 
-import java.util.regex.Pattern;
+import java.security.KeyPair;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 /**
- * 简单的字符串工具类
+ * 国密SM2加密算法的公私钥信息对象
  *
  * @author pengjianqiang
- * @date 2022-04-05
+ * @date 2023-08-11
  */
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
-public final class StringUtils {
-    private static final Pattern PATTERN_CHINESE = Pattern.compile("[\u4e00-\u9fa5]");
-
-    /**
-     * 替换字符串中的换行符
-     *
-     * @param str
-     * @param isChinese
-     *         如果是英文内容，则把换行符替换成空格
-     * @return
-     */
-    public static String cleanLineSeparator(String str, boolean isChinese) {
-        return cleanLineSeparator(str, isChinese ? "" : " ");
-    }
-
-    /**
-     * 替换字符串中的换行符
-     *
-     * @param str
-     * @return
-     */
-    public static String cleanLineSeparator(String str, String replacement) {
-        if (CheckUtils.isNotEmpty(str)) {
-            //换行替换成空字符串
-            return str.replaceAll("\r\n", replacement).replaceAll("\n\r", replacement).replaceAll("\r", replacement)
-                    .replaceAll("\n", replacement).trim();
-        } else {
-            return str;
-        }
-    }
-
-    /**
-     * 判断字符串是否包含中文
-     *
-     * @param str
-     * @return
-     */
-    public static boolean containChinese(String str) {
-        return PATTERN_CHINESE.matcher(str).find();
-    }
+@Getter
+@AllArgsConstructor
+public class SM2KeyPair {
+    private KeyPair keyPair;
+    private String publicKey;
+    private String privateKey;
 }
