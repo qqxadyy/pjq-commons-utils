@@ -41,6 +41,7 @@ import pjq.commons.annos.EnhanceEnum.EnumNameAsValueType;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class CommonEnumConstant {
     // ----------------通用枚举----------------
+
     /**
      * 是或否类型--<br>
      * NO--N：否<br>
@@ -79,5 +80,9 @@ public final class CommonEnumConstant {
     @EnhanceEnumFieldDefine(nameAsValue = EnumNameAsValueType.LOWER_CASE)
     public enum TrueOrFalse implements EnhanceEnum {
         FALSE, TRUE;
+
+        public Boolean valueOfBoolean() {
+            return Boolean.valueOf(this.name());
+        }
     }
 }

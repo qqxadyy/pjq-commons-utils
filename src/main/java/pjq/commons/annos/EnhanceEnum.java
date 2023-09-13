@@ -52,7 +52,7 @@ import pjq.commons.utils.CheckUtils;
 public interface EnhanceEnum {
     /**
      * 用于定义从枚举的哪个属性获取对应值
-     * 
+     *
      * @author pengjianqiang
      * @date 2021年2月7日
      */
@@ -83,7 +83,7 @@ public interface EnhanceEnum {
 
     /**
      * 枚举名作为value值时的取值方式
-     * 
+     *
      * @author pengjianqiang
      * @date 2021年4月17日
      */
@@ -113,11 +113,11 @@ public interface EnhanceEnum {
      * 1.如果有使用{@link EnhanceEnumFieldDefine}注解，则按该注解的配置获取枚举值<br>
      * 2.否则使用ordinal值作为枚举值<br>
      * 3.或枚举类重写value方法，用其返回值作为枚举值
-     * 
+     *
      * @return
      */
     default String value() {
-        Enum<?> thisEnum = ((Enum<?>)this);
+        Enum<?> thisEnum = ((Enum<?>) this);
         Class<?> thisClass = getClass();
         CheckUtils.checkNotFalse(thisClass.isEnum(), "只有枚举类才能实现" + EnhanceEnum.class.getSimpleName() + "接口");
 
@@ -126,7 +126,7 @@ public interface EnhanceEnum {
             // 如果枚举类有对应属性，则使用该属性值作为枚举的值
             EnhanceEnumFieldDefine anno = thisClass.getAnnotation(EnhanceEnumFieldDefine.class);
             EnumNameAsValueType nameAsValueType =
-                CheckUtils.isNotNull(anno) ? anno.nameAsValue() : EnumNameAsValueType.DISABLE;
+                    CheckUtils.isNotNull(anno) ? anno.nameAsValue() : EnumNameAsValueType.DISABLE;
             if (EnumNameAsValueType.DISABLE.equals(nameAsValueType)) {
                 String targetFieldName = CheckUtils.isNotNull(anno) ? anno.valueField() : "value";
                 Field targetField = thisClass.getDeclaredField(targetFieldName);
@@ -160,7 +160,7 @@ public interface EnhanceEnum {
 
     /**
      * 返回int类型的value值，value值不是int类型时返回{@link Integer#MIN_VALUE}
-     * 
+     *
      * @return
      */
     default Integer valueOfInt() {
@@ -172,14 +172,27 @@ public interface EnhanceEnum {
     }
 
     /**
+     * 返回byte类型的value值，value值不是byte类型时返回{@link Byte#MIN_VALUE}
+     *
+     * @return
+     */
+    default Byte valueOfByte() {
+        try {
+            return Byte.valueOf(value());
+        } catch (Exception e) {
+            return Byte.MIN_VALUE;
+        }
+    }
+
+    /**
      * 1.如果有使用{@link EnhanceEnumFieldDefine}注解，则按该注解的配置枚举描述<br>
      * 2.否则使用name()作为枚举描述<br>
      * 3.或枚举类重写desc方法，用其返回值作为枚举描述
-     * 
+     *
      * @return
      */
     default String desc() {
-        Enum<?> thisEnum = ((Enum<?>)this);
+        Enum<?> thisEnum = ((Enum<?>) this);
         Class<?> thisClass = getClass();
         CheckUtils.checkNotFalse(thisClass.isEnum(), "只有枚举类才能实现" + EnhanceEnum.class.getSimpleName() + "接口");
 
@@ -207,7 +220,7 @@ public interface EnhanceEnum {
      * 1.如果有使用{@link EnhanceEnumFieldDefine}注解，则按该注解的配置枚举分组<br>
      * 2.否则返回null<br>
      * 3.或枚举类重写group方法，用其返回值作为枚举分组
-     * 
+     *
      * @return
      */
     default String group() {
@@ -231,7 +244,7 @@ public interface EnhanceEnum {
 
     /**
      * 默认实现{@link EnhanceEnum}的类，用于根据枚举值查找枚举类型
-     * 
+     *
      * @author pengjianqiang
      * @date 2021年2月7日
      */
@@ -239,13 +252,13 @@ public interface EnhanceEnum {
     final class DefaultEnhanceEnum implements EnhanceEnum {
         /**
          * 根据枚举值/名查找枚举类型
-         * 
+         *
          * @param <T>
-         *            枚举类型
+         *         枚举类型
          * @param enumTypeName
-         *            枚举类的名
+         *         枚举类的名
          * @param valueOrName
-         *            枚举类的值/名
+         *         枚举类的值/名
          * @return 枚举对象
          * @author pengjianqiang@2021年4月20日
          */
@@ -256,7 +269,7 @@ public interface EnhanceEnum {
             }
 
             try {
-                return valueOrNameOf((Class<T>)Class.forName(enumTypeName), valueOrName);
+                return valueOrNameOf((Class<T>) Class.forName(enumTypeName), valueOrName);
             } catch (Exception e) {
                 return null;
             }
@@ -264,13 +277,13 @@ public interface EnhanceEnum {
 
         /**
          * 根据枚举值/名查找枚举类型
-         * 
+         *
          * @param <T>
-         *            枚举类型
+         *         枚举类型
          * @param enumType
-         *            枚举类的class
+         *         枚举类的class
          * @param valueOrName
-         *            枚举类的值/名
+         *         枚举类的值/名
          * @return 枚举对象
          * @author pengjianqiang@2021年4月20日
          */
@@ -289,7 +302,7 @@ public interface EnhanceEnum {
                 if (EnhanceEnum.class.isAssignableFrom(enumType)) {
                     T[] enums = enumType.getEnumConstants();
                     for (T tempEnum : enums) {
-                        if (valueOrName.equals(((EnhanceEnum)tempEnum).value())) {
+                        if (valueOrName.equals(((EnhanceEnum) tempEnum).value())) {
                             targetEnum = tempEnum;
                         }
                     }
@@ -300,13 +313,13 @@ public interface EnhanceEnum {
 
         /**
          * 判断枚举值是否属于枚举对象
-         * 
+         *
          * @param <T>
-         *            枚举类型
+         *         枚举类型
          * @param enumType
-         *            枚举类的class
+         *         枚举类的class
          * @param valueOrName
-         *            枚举类的值/名
+         *         枚举类的值/名
          * @return true/false
          * @author pengjianqiang@2021年4月20日
          */
