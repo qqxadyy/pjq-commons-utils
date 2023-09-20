@@ -9,7 +9,7 @@
 	</parent>
 
 	<artifactId>pjq-commons-utils</artifactId>
-	<version>1.4.5-SNAPSHOT</version>
+	<version>1.4.5</version>
 	<name>pjq-commons-utils</name>
 	<description>个人整理的工具类</description>
 	<inceptionYear>2023</inceptionYear>
@@ -29,7 +29,7 @@
 		<connection>scm:git:https://gitee.com/qqxadyy/pjq-commons-utils.git</connection>
 		<developerConnection>scm:git:https://gitee.com/qqxadyy/pjq-commons-utils.git</developerConnection>
 		<url>https://github.com/qqxadyy/pjq-commons-utils</url>
-		<tag>HEAD</tag>
+		<tag>pjq-commons-utils-1.4.5</tag>
 	</scm>
 
 	<properties>
