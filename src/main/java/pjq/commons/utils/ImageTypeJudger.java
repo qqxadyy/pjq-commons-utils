@@ -44,15 +44,16 @@ import java.io.IOException;
  * @date 2019年1月15日
  */
 public final class ImageTypeJudger {
-    private ImageTypeJudger() {}
+    private ImageTypeJudger() {
+    }
 
     public static final String NOT_IMAGE = "notImage";
 
     /**
      * 判断文件是否图片类型
-     * 
+     *
      * @param filePath
-     *            文件绝对路径
+     *         文件绝对路径
      * @return
      */
     public static boolean isImage(String filePath) {
@@ -60,10 +61,11 @@ public final class ImageTypeJudger {
     }
 
     /**
-     * 判断文件是否图片类型
-     * 
+     * 判断文件是否图片类型<br>
+     * 可用{@link FileTypeUtils#isImage}代替，该方法更准确
+     *
      * @param file
-     *            文件对象
+     *         文件对象
      * @return
      */
     public static boolean isImage(File file) {
@@ -76,9 +78,9 @@ public final class ImageTypeJudger {
 
     /**
      * 获取图片类型(jpg/png/gif/bmp)
-     * 
+     *
      * @param filePath
-     *            文件绝对路径
+     *         文件绝对路径
      * @return
      */
     public static String getImageType(String filePath) {
@@ -87,9 +89,9 @@ public final class ImageTypeJudger {
 
     /**
      * 获取图片类型(jpg/png/gif/bmp)
-     * 
+     *
      * @param file
-     *            文件对象
+     *         文件对象
      * @return
      */
     public static String getImageType(File file) {
@@ -124,7 +126,7 @@ public final class ImageTypeJudger {
 
     /**
      * byte数组转换成16进制字符串
-     * 
+     *
      * @param src
      * @return
      */

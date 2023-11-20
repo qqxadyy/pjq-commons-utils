@@ -64,14 +64,32 @@ public final class DateTimeUtils {
     private static final String endTime = " 23:59:59";
     private static ZoneId defaultZone = ZoneId.systemDefault();
 
+    /**
+     * 把{@link LocalDate}对象转成{@link Date}对象
+     *
+     * @param date
+     * @return
+     */
     public static Date localDateToDate(LocalDate date) {
         return temporalAccessorToDate(date);
     }
 
+    /**
+     * 把{@link LocalDateTime}对象转成{@link Date}对象
+     *
+     * @param dateTime
+     * @return
+     */
     public static Date localDateTimeToDate(LocalDateTime dateTime) {
         return temporalAccessorToDate(dateTime);
     }
 
+    /**
+     * 把{@link LocalDateTime}对象转成{@link LocalDate}对象
+     *
+     * @param dateTime
+     * @return
+     */
     public static LocalDate localDateTimeToLocalDate(LocalDateTime dateTime) {
         return dateTime.toLocalDate();
     }
@@ -79,20 +97,32 @@ public final class DateTimeUtils {
     private static Date temporalAccessorToDate(TemporalAccessor temporal) {
         Class<?> clazz = temporal.getClass();
         if (LocalDate.class.isAssignableFrom(clazz)) {
-            return Date.from(((LocalDate)temporal).atStartOfDay(defaultZone).toInstant());
+            return Date.from(((LocalDate) temporal).atStartOfDay(defaultZone).toInstant());
         } else if (LocalDateTime.class.isAssignableFrom(clazz)) {
-            return Date.from(((LocalDateTime)temporal).atZone(defaultZone).toInstant());
+            return Date.from(((LocalDateTime) temporal).atZone(defaultZone).toInstant());
         } else {
             throw new RuntimeException("暂不支持".concat(clazz.getName()).concat("转换为").concat(Date.class.getName()));
         }
     }
 
+    /**
+     * 把{@link Date}对象转成{@link LocalDateTime}对象
+     *
+     * @param date
+     * @return
+     */
     public static LocalDateTime dateToLocalDateTime(Date date) {
-        return (LocalDateTime)dateToTemporalAccessor(date, LocalDateTime.class);
+        return (LocalDateTime) dateToTemporalAccessor(date, LocalDateTime.class);
     }
 
+    /**
+     * 把{@link Date}对象转成{@link LocalDate}对象
+     *
+     * @param date
+     * @return
+     */
     public static LocalDate dateToLocalDate(Date date) {
-        return (LocalDate)dateToTemporalAccessor(date, LocalDate.class);
+        return (LocalDate) dateToTemporalAccessor(date, LocalDate.class);
     }
 
     private static TemporalAccessor dateToTemporalAccessor(Date date, Class<? extends TemporalAccessor> clazz) {
@@ -108,7 +138,7 @@ public final class DateTimeUtils {
 
     /**
      * 把yyyy-MM-dd格式的日期字符串转成{@link Date}对象
-     * 
+     *
      * @param dateStr
      * @return
      */
@@ -118,7 +148,7 @@ public final class DateTimeUtils {
 
     /**
      * 把指定格式的日期字符串转成{@link Date}对象
-     * 
+     *
      * @param dateStr
      * @param pattern
      * @return
@@ -129,7 +159,7 @@ public final class DateTimeUtils {
 
     /**
      * 把指定格式的日期字符串转成{@link Date}对象
-     * 
+     *
      * @param dateStr
      * @param pattern
      * @return
@@ -137,12 +167,12 @@ public final class DateTimeUtils {
     public static Date parseDate(String dateStr, String pattern) {
         DateTimeFormatter formatter = ofPattern(pattern);
         return temporalAccessorToDate(DateTimePattern.isDatePattern(pattern) ? LocalDate.parse(dateStr, formatter)
-            : LocalDateTime.parse(dateStr, formatter));
+                : LocalDateTime.parse(dateStr, formatter));
     }
 
     /**
      * 把yyyy-MM-dd格式的日期字符串转成{@link LocalDate}对象
-     * 
+     *
      * @param dateStr
      * @return
      */
@@ -152,7 +182,7 @@ public final class DateTimeUtils {
 
     /**
      * 把指定格式的日期字符串转成{@link LocalDate}对象
-     * 
+     *
      * @param dateStr
      * @param pattern
      * @return
@@ -163,7 +193,7 @@ public final class DateTimeUtils {
 
     /**
      * 把指定格式的日期字符串转成{@link LocalDate}对象
-     * 
+     *
      * @param dateStr
      * @param pattern
      * @return
@@ -171,12 +201,12 @@ public final class DateTimeUtils {
     public static LocalDate parseLocalDate(String dateStr, String pattern) {
         DateTimeFormatter formatter = ofPattern(pattern);
         return DateTimePattern.isDatePattern(pattern) ? LocalDate.parse(dateStr, formatter)
-            : LocalDateTime.parse(dateStr, formatter).toLocalDate();
+                : LocalDateTime.parse(dateStr, formatter).toLocalDate();
     }
 
     /**
      * 把yyyy-MM-dd HH:mm:ss格式的日期字符串转成{@link LocalDateTime}对象
-     * 
+     *
      * @param dateStr
      * @return
      */
@@ -186,7 +216,7 @@ public final class DateTimeUtils {
 
     /**
      * 把指定格式的日期字符串转成{@link LocalDateTime}对象
-     * 
+     *
      * @param dateStr
      * @param pattern
      * @return
@@ -197,7 +227,7 @@ public final class DateTimeUtils {
 
     /**
      * 把指定格式的日期字符串转成{@link LocalDateTime}对象
-     * 
+     *
      * @param dateStr
      * @param pattern
      * @return
@@ -211,11 +241,11 @@ public final class DateTimeUtils {
     /**
      * 通用日期时间格式化，用于直接指定pattern<br>
      * 其它parse方法都限定成使用较多的pattern才能使用，而该方法可直接指定不常用的pattern，但是必须根据date的类型指定可用的pattern
-     * 
+     *
      * @param dateStr
      * @param pattern
      * @param dateClass
-     *            {@link Date}、{@link LocalDate}、{@link LocalDate}、{@link LocalTime}的Class对象
+     *         {@link Date}、{@link LocalDate}、{@link LocalDate}、{@link LocalTime}的Class对象
      * @return
      */
     @SuppressWarnings("unchecked")
@@ -223,16 +253,16 @@ public final class DateTimeUtils {
         DateTimeFormatter formatter = ofPattern(pattern);
         if (Date.class.isAssignableFrom(dateClass)) {
             try {
-                return (R)new SimpleDateFormat(pattern).parse(dateStr);
+                return (R) new SimpleDateFormat(pattern).parse(dateStr);
             } catch (Exception e) {
                 throw new RuntimeException(dateStr.concat("转换为").concat(Date.class.getName()).concat("失败"));
             }
         } else if (LocalDate.class.isAssignableFrom(dateClass)) {
-            return (R)LocalDate.parse(dateStr, formatter);
+            return (R) LocalDate.parse(dateStr, formatter);
         } else if (LocalDateTime.class.isAssignableFrom(dateClass)) {
-            return (R)parseLocalDateTime(dateStr, pattern);
+            return (R) parseLocalDateTime(dateStr, pattern);
         } else if (LocalTime.class.isAssignableFrom(dateClass)) {
-            return (R)LocalTime.parse(dateStr, formatter);
+            return (R) LocalTime.parse(dateStr, formatter);
         } else {
             throw new RuntimeException("不支持类".concat(dateClass.getClass().getName()).concat("的日期时间转换"));
         }
@@ -241,7 +271,7 @@ public final class DateTimeUtils {
     /**
      * 通用日期时间格式化，用于直接指定pattern<br>
      * 其它parse方法都限定成使用较多的pattern才能使用，而该方法可直接指定不常用的pattern，但是必须根据date的类型指定可用的pattern
-     * 
+     *
      * @param <R>
      * @param dateStr
      * @param formatter
@@ -252,16 +282,16 @@ public final class DateTimeUtils {
     public static <R> R commonParse(String dateStr, DateTimeFormatter formatter, Class<R> dateClass) {
         if (Date.class.isAssignableFrom(dateClass)) {
             try {
-                return (R)localDateTimeToDate(LocalDateTime.parse(dateStr, formatter));
+                return (R) localDateTimeToDate(LocalDateTime.parse(dateStr, formatter));
             } catch (Exception e) {
                 throw new RuntimeException(dateStr.concat("转换为").concat(Date.class.getName()).concat("失败"));
             }
         } else if (LocalDate.class.isAssignableFrom(dateClass)) {
-            return (R)LocalDate.parse(dateStr, formatter);
+            return (R) LocalDate.parse(dateStr, formatter);
         } else if (LocalDateTime.class.isAssignableFrom(dateClass)) {
-            return (R)LocalDateTime.parse(dateStr, formatter);
+            return (R) LocalDateTime.parse(dateStr, formatter);
         } else if (LocalTime.class.isAssignableFrom(dateClass)) {
-            return (R)LocalTime.parse(dateStr, formatter);
+            return (R) LocalTime.parse(dateStr, formatter);
         } else {
             throw new RuntimeException("不支持类".concat(dateClass.getClass().getName()).concat("的日期时间转换"));
         }
@@ -269,7 +299,7 @@ public final class DateTimeUtils {
 
     /**
      * JavaScript生成JSON字符串时，Date对象为(UTC/ISO instant,'yyyy-MM-ddTHH:mm:ss.SSSZ')格式，需要特殊处理
-     * 
+     *
      * @param dateStr
      * @return
      */
@@ -293,7 +323,7 @@ public final class DateTimeUtils {
 
     /**
      * 把{@link Date}对象转成yyyy-MM-dd格式的日期字符串
-     * 
+     *
      * @param date
      * @return
      */
@@ -303,7 +333,7 @@ public final class DateTimeUtils {
 
     /**
      * 把{@link Date}对象转成指定格式的日期字符串
-     * 
+     *
      * @param dateStr
      * @param pattern
      * @return
@@ -314,19 +344,19 @@ public final class DateTimeUtils {
 
     /**
      * 把{@link Date}对象转成指定格式的日期字符串
-     * 
+     *
      * @param dateStr
      * @param pattern
      * @return
      */
     public static String format(Date date, String pattern) {
         return java8TimeCommonFormat(dateToTemporalAccessor(date,
-            DateTimePattern.isDatePattern(pattern) ? LocalDate.class : LocalDateTime.class), pattern);
+                DateTimePattern.isDatePattern(pattern) ? LocalDate.class : LocalDateTime.class), pattern);
     }
 
     /**
      * 把{@link java.time.LocalDate}对象转成yyyy-MM-dd格式的日期字符串
-     * 
+     *
      * @param date
      * @return
      */
@@ -336,7 +366,7 @@ public final class DateTimeUtils {
 
     /**
      * 把{@link java.time.LocalDateTime}对象转成yyyy-MM-dd格式的日期字符串
-     * 
+     *
      * @param date
      * @return
      */
@@ -346,7 +376,7 @@ public final class DateTimeUtils {
 
     /**
      * 把{@link java.time.LocalDate}对象转成指定格式的日期字符串
-     * 
+     *
      * @param date
      * @param pattern
      * @return
@@ -357,7 +387,7 @@ public final class DateTimeUtils {
 
     /**
      * 把{@link java.time.LocalDate}对象转成指定格式的日期字符串
-     * 
+     *
      * @param date
      * @param pattern
      * @return
@@ -368,7 +398,7 @@ public final class DateTimeUtils {
 
     /**
      * 把{@link java.time.LocalDateTime}对象转成指定格式的日期字符串
-     * 
+     *
      * @param dateTime
      * @param pattern
      * @return
@@ -379,22 +409,22 @@ public final class DateTimeUtils {
 
     /**
      * 把{@link java.time.LocalDateTime}对象转成指定格式的日期字符串
-     * 
+     *
      * @param dateTime
      * @param pattern
      * @return
      */
     public static String format(LocalDateTime dateTime, String pattern) {
         return java8TimeCommonFormat(DateTimePattern.isDatePattern(pattern) ? dateTime.toLocalDate() : dateTime,
-            pattern);
+                pattern);
     }
 
     /**
      * 通用日期时间格式化，用于直接指定pattern<br>
      * 其它format方法都限定成使用较多的pattern才能使用，而该方法可直接指定不常用的pattern，但是必须根据date的类型指定可用的pattern
-     * 
+     *
      * @param date
-     *            {@link Date}、{@link LocalDate}、{@link LocalDate}、{@link LocalTime}对象
+     *         {@link Date}、{@link LocalDate}、{@link LocalDate}、{@link LocalTime}对象
      * @param pattern
      * @return
      */
@@ -422,7 +452,7 @@ public final class DateTimeUtils {
 
     /**
      * 获取当前日期时间对象
-     * 
+     *
      * @return
      */
     public static Date currentDateObj() {
@@ -431,7 +461,7 @@ public final class DateTimeUtils {
 
     /**
      * 获取当前日期对象
-     * 
+     *
      * @return
      */
     public static LocalDate currentDate() {
@@ -440,7 +470,7 @@ public final class DateTimeUtils {
 
     /**
      * 获取当前日期时间对象
-     * 
+     *
      * @return
      */
     public static LocalDateTime currentDateTime() {
@@ -449,7 +479,7 @@ public final class DateTimeUtils {
 
     /**
      * 获取当前日期,格式为yyyy-MM-dd的字符串
-     * 
+     *
      * @return
      */
     public static String currentDateStr() {
@@ -458,7 +488,7 @@ public final class DateTimeUtils {
 
     /**
      * 获取当前日期,格式为yyyyMMdd的字符串
-     * 
+     *
      * @return
      */
     public static String currentDateCompactStr() {
@@ -467,7 +497,7 @@ public final class DateTimeUtils {
 
     /**
      * 获取当前时间,格式为yyyy-MM-dd HH:mm:ss的字符串
-     * 
+     *
      * @return
      */
     public static String currentDateTimeStr() {
@@ -476,7 +506,7 @@ public final class DateTimeUtils {
 
     /**
      * 获取当前时间,格式为yyyyMMddHHmmss的字符串
-     * 
+     *
      * @return
      */
     public static String currentDateTimeCompactStr() {
@@ -485,7 +515,7 @@ public final class DateTimeUtils {
 
     /**
      * 获取当前年份
-     * 
+     *
      * @return
      */
     public static int currentYear() {
@@ -494,7 +524,7 @@ public final class DateTimeUtils {
 
     /**
      * 获取当前月份
-     * 
+     *
      * @return
      */
     public static int currentMonth() {
@@ -503,7 +533,7 @@ public final class DateTimeUtils {
 
     /**
      * 获取当前日期
-     * 
+     *
      * @return
      */
     public static int currentDay() {
@@ -512,7 +542,7 @@ public final class DateTimeUtils {
 
     /**
      * 获取当前年月,格式为yyyyMM的字符串
-     * 
+     *
      * @return
      */
     public static String currentYearMonth() {
@@ -521,7 +551,7 @@ public final class DateTimeUtils {
 
     /**
      * 获取两个时间相差的天数
-     * 
+     *
      * @param d1
      * @param d2
      * @return
@@ -532,7 +562,7 @@ public final class DateTimeUtils {
 
     /**
      * 获取两个时间相差的天数
-     * 
+     *
      * @param d1
      * @param d2
      * @return
@@ -543,7 +573,7 @@ public final class DateTimeUtils {
 
     /**
      * 获取两个日期相差的天数
-     * 
+     *
      * @param d1
      * @param d2
      * @return
@@ -559,7 +589,7 @@ public final class DateTimeUtils {
      * @param d1
      * @param d2
      * @param unit
-     *            只支持年(YEARS)、月(MONTHS)、日(DAYS)
+     *         只支持年(YEARS)、月(MONTHS)、日(DAYS)
      * @return
      */
     public static int duration(LocalDate d1, LocalDate d2, ChronoUnit unit) {
@@ -576,7 +606,7 @@ public final class DateTimeUtils {
         }
         CheckUtils.checkNotFalse(unitValid, "只支持年(YEARS)、月(MONTHS)、日(DAYS)这几个单位的差值计算");
 
-        // 问题：Period.getDays只能获取相差的时间中的天数部分，但是相差的年份、月份获取不了，即getDays不是获取相差总天数，实际应用以下方式：
+        // 问题：Period.getDays只能获取相差的时间中的天数部分，但是相差的年份、月份获取不了，即getDays不是获取相差总天数，实际应使用以下方式：
         // 方法1：Duration.between(LocaleDateTime d1,LocaleDateTime d2).getSeconds/toDays等
         // 方法2：ChronoUnit.SECONDS/DAYS等.between(LocaleDateTime d1,LocaleDateTime d2)
         return Math.abs(new Long(unit.between(d1, d2)).intValue());
@@ -584,7 +614,7 @@ public final class DateTimeUtils {
 
     /**
      * 获取两个日期相差的天数，并返回"Y年M个月D天"的字符串
-     * 
+     *
      * @param d1
      * @param d2
      * @return
@@ -631,13 +661,13 @@ public final class DateTimeUtils {
             return "0天";
         } else {
             return (durationYears > 0 ? (durationYears + "年") : "")
-                + (durationMonths > 0 ? (durationMonths + "个月") : "") + (durationDays > 0 ? (durationDays + "天") : "");
+                    + (durationMonths > 0 ? (durationMonths + "个月") : "") + (durationDays > 0 ? (durationDays + "天") : "");
         }
     }
 
     /**
      * 获取两个时间相差的秒数
-     * 
+     *
      * @param d1
      * @param d2
      * @return
@@ -648,7 +678,7 @@ public final class DateTimeUtils {
 
     /**
      * 获取两个日期相差的秒数
-     * 
+     *
      * @param d1
      * @param d2
      * @return
@@ -659,7 +689,7 @@ public final class DateTimeUtils {
 
     /**
      * 获取两个时间相差的秒数
-     * 
+     *
      * @param d1
      * @param d2
      * @return
@@ -670,7 +700,7 @@ public final class DateTimeUtils {
 
     /**
      * 根据日期得到当天开始时间的字符串,格式为yyyy-MM-dd HH:mm:ss
-     * 
+     *
      * @param date
      * @return
      */
@@ -680,7 +710,7 @@ public final class DateTimeUtils {
 
     /**
      * 根据日期得到当天开始时间的字符串,格式为yyyy-MM-dd HH:mm:ss
-     * 
+     *
      * @param date
      * @return
      */
@@ -690,7 +720,7 @@ public final class DateTimeUtils {
 
     /**
      * 根据日期得到当天开始时间的字符串,格式为yyyy-MM-dd HH:mm:ss
-     * 
+     *
      * @param dateTime
      * @return
      */
@@ -700,7 +730,7 @@ public final class DateTimeUtils {
 
     /**
      * 根据日期得到当天开始时间的字符串,格式为yyyy-MM-dd HH:mm:ss，并转为对应的日期时间对象
-     * 
+     *
      * @param date
      * @param dateClass
      * @return
@@ -711,7 +741,7 @@ public final class DateTimeUtils {
 
     /**
      * 根据日期得到当天结束时间的字符串,格式为yyyy-MM-dd HH:mm:ss
-     * 
+     *
      * @param date
      * @return
      */
@@ -721,7 +751,7 @@ public final class DateTimeUtils {
 
     /**
      * 根据日期得到当天结束时间的字符串,格式为yyyy-MM-dd HH:mm:ss
-     * 
+     *
      * @param date
      * @return
      */
@@ -731,7 +761,7 @@ public final class DateTimeUtils {
 
     /**
      * 根据日期得到当天结束时间的字符串,格式为yyyy-MM-dd HH:mm:ss
-     * 
+     *
      * @param dateTime
      * @return
      */
@@ -741,7 +771,7 @@ public final class DateTimeUtils {
 
     /**
      * 根据日期得到当天结束时间的字符串,格式为yyyy-MM-dd HH:mm:ss，并转为对应的日期时间对象
-     * 
+     *
      * @param date
      * @param dateClass
      * @return
@@ -752,8 +782,8 @@ public final class DateTimeUtils {
 
     private static <T, R> R getDayStartOrEnd(T date, Class<R> dateClass, String methodName) {
         try {
-            String dateStr = (String)MethodUtils.invokeStaticOrDefault(DateTimeUtils.class,
-                DateTimeUtils.class.getMethod(methodName, date.getClass()), date);
+            String dateStr = (String) MethodUtils.invokeStaticOrDefault(DateTimeUtils.class,
+                    DateTimeUtils.class.getMethod(methodName, date.getClass()), date);
             return commonParse(dateStr, DateTimePattern.PATTERN_DATETIME.value(), dateClass);
         } catch (Throwable e) {
             throw new RuntimeException(e);
@@ -762,12 +792,12 @@ public final class DateTimeUtils {
 
     /**
      * 日期相加/减<br>
-     * 
+     *
      * @param dateTime
      * @param amountToAdd
-     *            传入负值可实现相减
+     *         传入负值可实现相减
      * @param unit
-     *            只支持年(YEARS)、月(MONTHS)、日(DAYS)、时(HOURS)、分(MINUTES)、秒(SECONDS)
+     *         只支持年(YEARS)、月(MONTHS)、日(DAYS)、时(HOURS)、分(MINUTES)、秒(SECONDS)
      * @return
      */
     public static Date plus(Date date, long amountToAdd, ChronoUnit unit) {
@@ -777,12 +807,12 @@ public final class DateTimeUtils {
     /**
      * 日期相加/减<br>
      * (实际相当于00:00:00的日期做时间相加减，然后返回缺少时分秒信息的日期对象)
-     * 
+     *
      * @param dateTime
      * @param amountToAdd
-     *            传入负值可实现相减
+     *         传入负值可实现相减
      * @param unit
-     *            只支持年(YEARS)、月(MONTHS)、日(DAYS)、时(HOURS)、分(MINUTES)、秒(SECONDS)
+     *         只支持年(YEARS)、月(MONTHS)、日(DAYS)、时(HOURS)、分(MINUTES)、秒(SECONDS)
      * @return
      */
     public static LocalDate plus(LocalDate date, long amountToAdd, ChronoUnit unit) {
@@ -791,12 +821,12 @@ public final class DateTimeUtils {
 
     /**
      * 时间相加/减
-     * 
+     *
      * @param dateTime
      * @param amountToAdd
-     *            传入负值可实现相减
+     *         传入负值可实现相减
      * @param unit
-     *            只支持年(YEARS)、月(MONTHS)、日(DAYS)、时(HOURS)、分(MINUTES)、秒(SECONDS)
+     *         只支持年(YEARS)、月(MONTHS)、日(DAYS)、时(HOURS)、分(MINUTES)、秒(SECONDS)
      * @return
      */
     public static LocalDateTime plus(LocalDateTime dateTime, long amountToAdd, ChronoUnit unit) {
@@ -823,7 +853,7 @@ public final class DateTimeUtils {
 
     /**
      * 获取日期月份的第一天
-     * 
+     *
      * @param date
      * @return
      */
@@ -833,7 +863,7 @@ public final class DateTimeUtils {
 
     /**
      * 获取日期月份的第一天
-     * 
+     *
      * @param date
      * @return
      */
@@ -843,19 +873,19 @@ public final class DateTimeUtils {
 
     /**
      * 获取日期月份的第一天
-     * 
+     *
      * @param dateTime
      * @return
      */
     public static LocalDateTime firstDayOfMonth(LocalDateTime dateTime) {
         // 当前日期-(当前日期的天)+(1天)，再带上日期开始的时分秒信息
         return plus(dateTime, -1 * dateTime.getDayOfMonth() + 1, ChronoUnit.DAYS)
-            .with(LocalTime.parse(startTime, ofPattern(" HH:mm:ss")));
+                .with(LocalTime.parse(startTime, ofPattern(" HH:mm:ss")));
     }
 
     /**
      * 获取日期月份的最后一天
-     * 
+     *
      * @param date
      * @return
      */
@@ -865,7 +895,7 @@ public final class DateTimeUtils {
 
     /**
      * 获取日期月份的最后一天
-     * 
+     *
      * @param date
      * @return
      */
@@ -875,19 +905,19 @@ public final class DateTimeUtils {
 
     /**
      * 获取日期月份的最后一天
-     * 
+     *
      * @param dateTime
      * @return
      */
     public static LocalDateTime lastDayOfMonth(LocalDateTime dateTime) {
         // 当前日期+(1月)-(当前日期的天)，再带上日期结束的时分秒信息
         return plus(plus(dateTime, 1, ChronoUnit.MONTHS), -1 * dateTime.getDayOfMonth(), ChronoUnit.DAYS)
-            .with(LocalTime.parse(endTime, ofPattern(" HH:mm:ss")));
+                .with(LocalTime.parse(endTime, ofPattern(" HH:mm:ss")));
     }
 
     /**
      * 获取UTC时间戳，单位秒
-     * 
+     *
      * @param dateTime
      * @return
      */
@@ -897,7 +927,7 @@ public final class DateTimeUtils {
 
     /**
      * 获取UTC时间戳，单位毫秒
-     * 
+     *
      * @param dateTime
      * @return
      */
@@ -907,7 +937,7 @@ public final class DateTimeUtils {
 
     /**
      * 时间戳转换为LocalDateTime(时区为UTC+8)
-     * 
+     *
      * @param timeMillis
      * @return
      */
@@ -917,7 +947,7 @@ public final class DateTimeUtils {
 
     /**
      * 时间戳转换为Date(时区为UTC+8)
-     * 
+     *
      * @param timeMillis
      * @return
      */

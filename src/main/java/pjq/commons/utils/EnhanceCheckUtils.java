@@ -47,7 +47,7 @@ import pjq.commons.support.NoParamConsumer;
  * 注意：<br>
  * 1.组合条件时提供的方法都是and连接，需要or时直接使用{@link #or(boolean)}方法，混合时用时用回常规的if...else写法<br>
  * 2.复杂的if...else if...else用回常规写法
- * 
+ *
  * @author pengjianqiang
  * @date 2022年6月27日
  */
@@ -61,7 +61,7 @@ public final class EnhanceCheckUtils {
 
     /**
      * 返回组合条件的判断结果
-     * 
+     *
      * @return
      * @author pengjianqiang@2022年6月27日
      */
@@ -71,7 +71,7 @@ public final class EnhanceCheckUtils {
 
     /**
      * 当组合条件判断为true时执行对应逻辑，为false时不执行
-     * 
+     *
      * @param doIfTrue
      * @author pengjianqiang@2022年6月27日
      */
@@ -81,7 +81,7 @@ public final class EnhanceCheckUtils {
 
     /**
      * 当组合条件判断为true/false执行对应逻辑
-     * 
+     *
      * @param doIfTrue
      * @param doIfFalse
      * @author pengjianqiang@2022年6月27日
@@ -96,7 +96,7 @@ public final class EnhanceCheckUtils {
 
     /**
      * 当组合条件判断为true时返回对应的值，为false时返回null
-     * 
+     *
      * @param <T>
      * @param objIfTrue
      * @return
@@ -108,7 +108,7 @@ public final class EnhanceCheckUtils {
 
     /**
      * 当组合条件判断为true/false时返回对应的值
-     * 
+     *
      * @param <T>
      * @param objIfTrue
      * @param objIfFalse

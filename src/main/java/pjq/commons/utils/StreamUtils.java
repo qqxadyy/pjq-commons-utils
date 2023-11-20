@@ -45,10 +45,23 @@ import lombok.NoArgsConstructor;
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class StreamUtils {
+    /**
+     * 用系统换行符连接字符串Stream
+     *
+     * @param stream
+     * @return
+     */
     public static String joinString(Stream<String> stream) {
         return joinString(stream, System.lineSeparator());
     }
 
+    /**
+     * 用指定字符连接字符串Stream
+     *
+     * @param stream
+     * @param delimiter
+     * @return
+     */
     public static String joinString(Stream<String> stream, String delimiter) {
         return stream.collect(Collectors.joining(delimiter));
     }

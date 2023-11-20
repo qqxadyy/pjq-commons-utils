@@ -38,16 +38,24 @@ import lombok.NoArgsConstructor;
 
 /**
  * 默认值获取工具
- * 
+ *
  * @author pengjianqiang
  * @date 2021年3月10日
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class DefaultValueGetter {
+    /**
+     * 获取value，如果value为空，则获取defaultValue
+     *
+     * @param defaultValue
+     * @param value
+     * @param <T>
+     * @return
+     */
     public static <T> T getValue(T defaultValue, T value) {
         if (CheckUtils.isNotNull(value)) {
             if (value instanceof String) {
-                if (CheckUtils.isNotEmpty((String)value)) {
+                if (CheckUtils.isNotEmpty((String) value)) {
                     return value;
                 } else {
                     return defaultValue;
@@ -59,26 +67,42 @@ public class DefaultValueGetter {
         }
     }
 
+    /**
+     * 获取value，如果value为空，则获取defaultValue
+     *
+     * @param defaultValue
+     * @param values
+     * @param <T>
+     * @return
+     */
     @SafeVarargs
-    public static <T> T getValue(T defaultValue, T... array) {
-        if (CheckUtils.isNotEmpty(array) && CheckUtils.isNotNull(array[0])) {
-            if (array instanceof String[]) {
-                if (CheckUtils.isNotEmpty((String)array[0])) {
-                    return array[0];
+    public static <T> T getValue(T defaultValue, T... values) {
+        if (CheckUtils.isNotEmpty(values) && CheckUtils.isNotNull(values[0])) {
+            if (values instanceof String[]) {
+                if (CheckUtils.isNotEmpty((String) values[0])) {
+                    return values[0];
                 } else {
                     return defaultValue;
                 }
             }
-            return array[0];
+            return values[0];
         } else {
             return defaultValue;
         }
     }
 
+    /**
+     * 获取value，如果value为空，则通过defaultValueGetter获取defaultValue
+     *
+     * @param defaultValueGetter
+     * @param value
+     * @param <T>
+     * @return
+     */
     public static <T> T get(Supplier<T> defaultValueGetter, T value) {
         if (CheckUtils.isNotNull(value)) {
             if (value instanceof String) {
-                if (CheckUtils.isNotEmpty((String)value)) {
+                if (CheckUtils.isNotEmpty((String) value)) {
                     return value;
                 } else {
                     return defaultValueGetter.get();
@@ -90,17 +114,25 @@ public class DefaultValueGetter {
         }
     }
 
+    /**
+     * 获取value，如果value为空，则通过defaultValueGetter获取defaultValue
+     *
+     * @param defaultValueGetter
+     * @param values
+     * @param <T>
+     * @return
+     */
     @SafeVarargs
-    public static <T> T get(Supplier<T> defaultValueGetter, T... array) {
-        if (CheckUtils.isNotEmpty(array) && CheckUtils.isNotNull(array[0])) {
-            if (array instanceof String[]) {
-                if (CheckUtils.isNotEmpty((String)array[0])) {
-                    return array[0];
+    public static <T> T get(Supplier<T> defaultValueGetter, T... values) {
+        if (CheckUtils.isNotEmpty(values) && CheckUtils.isNotNull(values[0])) {
+            if (values instanceof String[]) {
+                if (CheckUtils.isNotEmpty((String) values[0])) {
+                    return values[0];
                 } else {
                     return defaultValueGetter.get();
                 }
             }
-            return array[0];
+            return values[0];
         } else {
             return defaultValueGetter.get();
         }

@@ -50,26 +50,20 @@ import lombok.NoArgsConstructor;
 public final class MethodUtils {
     /**
      * 调用类/接口的静态或默认方法(只适用于无参方法，有参方法需要使用另一个{@link #invokeStaticOrDefault(Class, Method, Object...)}方法)
-     * 
+     *
      * @param clazz
      * @param noArgsMethodName
-     * @param args
      * @return
      * @throws Throwable
      */
     public static Object invokeStaticOrDefault(Class<?> clazz, String noArgsMethodName) throws Throwable {
-        Method method = null;
-        try {
-            method = clazz.getDeclaredMethod(noArgsMethodName);
-        } catch (NoSuchMethodException e) {
-            throw e;
-        }
-        return invokeStaticOrDefault(clazz, method, (Object[])null);
+        Method method = clazz.getDeclaredMethod(noArgsMethodName);
+        return invokeStaticOrDefault(clazz, method, (Object[]) null);
     }
 
     /**
      * 调用类/接口的静态或默认方法(有参或无参方法都适用)
-     * 
+     *
      * @param clazz
      * @param method
      * @param args
@@ -80,16 +74,16 @@ public final class MethodUtils {
         if (method.isDefault()) {
             // 默认方法不能直接method.invoke
             InvocationHandler handler = (proxy, methodInProxy, argsInProxy) -> null; // 不用实际实现invoke方法
-            Object proxy = Proxy.newProxyInstance(clazz.getClassLoader(), new Class<?>[] {clazz}, handler);
+            Object proxy = Proxy.newProxyInstance(clazz.getClassLoader(), new Class<?>[]{ clazz }, handler);
             Constructor<MethodHandles.Lookup> constructor =
-                MethodHandles.Lookup.class.getDeclaredConstructor(Class.class, int.class);
+                    MethodHandles.Lookup.class.getDeclaredConstructor(Class.class, int.class);
             constructor.setAccessible(true);
 
             int allModes = MethodHandles.Lookup.PUBLIC | MethodHandles.Lookup.PRIVATE | MethodHandles.Lookup.PROTECTED
-                | MethodHandles.Lookup.PACKAGE;
+                    | MethodHandles.Lookup.PACKAGE;
 
             return constructor.newInstance(clazz, allModes).unreflectSpecial(method, clazz).bindTo(proxy)
-                .invokeWithArguments(args);
+                    .invokeWithArguments(args);
         } else {
             if (!method.isAccessible()) {
                 method.setAccessible(true);

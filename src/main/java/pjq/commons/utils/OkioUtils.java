@@ -32,7 +32,6 @@
 package pjq.commons.utils;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
@@ -51,7 +50,7 @@ import okio.Source;
 
 /**
  * okio工具类
- * 
+ *
  * @author pengjianqiang
  * @date 2022年6月28日
  */
@@ -74,28 +73,27 @@ public final class OkioUtils {
 
     private static File[] checkSrcAndDestFile(File srcFile, String srcFilePath, File destFile, String descFilePath) {
         if (CheckUtils.isNull(srcFile)) {
-            checkFilePath(srcFilePath, "源文件对象");
+            checkFilePath(srcFilePath, "源文件路径");
             srcFile = new File(srcFilePath);
         }
         if (CheckUtils.isNull(destFile)) {
-            checkFilePath(descFilePath, "目标文件对象");
+            checkFilePath(descFilePath, "目标文件路径");
             destFile = new File(descFilePath);
         }
         checkFile(srcFile, "源文件对象");
         checkFile(destFile, "目标文件对象");
 
-        destFile.getParentFile().mkdirs();
+        destFile.getParentFile().mkdirs(); //保证目标文件的路径存在
 
-        return new File[] {srcFile, destFile};
+        return new File[]{ srcFile, destFile };
     }
 
     /**
      * 读文件并返回每行字符串
-     * 
+     *
      * @param filePath
-     *            文件路径
+     *         文件路径
      * @return
-     * @author pengjianqiang@2022年6月28日
      */
     public static List<String> readLines(String filePath) {
         checkFilePath(filePath, "文件路径");
@@ -104,16 +102,15 @@ public final class OkioUtils {
 
     /**
      * 读文件并返回每行字符串
-     * 
+     *
      * @param file
-     *            文件对象
+     *         文件对象
      * @return
-     * @author pengjianqiang@2022年6月28日
      */
     public static List<String> readLines(File file) {
         checkFile(file, "文件对象");
         try {
-            return readLines(new FileInputStream(file));
+            return readLines(Files.newInputStream(file.toPath()));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -121,17 +118,16 @@ public final class OkioUtils {
 
     /**
      * 读输入流并返回每行字符串
-     * 
+     *
      * @param inputStream
-     *            输入流对象
+     *         输入流对象
      * @return
-     * @author pengjianqiang@2022年6月28日
      */
     public static List<String> readLines(InputStream inputStream) {
         checkObject(inputStream, "文件流对象");
         List<String> lines = new ArrayList<>();
         try (BufferedSource bufferedSource = Okio.buffer(Okio.source(inputStream))) {
-            for (String line; null != (line = bufferedSource.readUtf8Line());) {
+            for (String line; null != (line = bufferedSource.readUtf8Line()); ) {
                 lines.add(line);
             }
             return lines;
@@ -142,11 +138,10 @@ public final class OkioUtils {
 
     /**
      * 读文件并返回byteString对象
-     * 
+     *
      * @param filePath
-     *            文件路径
+     *         文件路径
      * @return
-     * @author pengjianqiang@2022年6月28日
      */
     public static ByteString readByteString(String filePath) {
         checkFilePath(filePath, "文件路径");
@@ -155,16 +150,15 @@ public final class OkioUtils {
 
     /**
      * 读文件并返回byteString对象
-     * 
+     *
      * @param file
-     *            文件对象
+     *         文件对象
      * @return
-     * @author pengjianqiang@2022年6月28日
      */
     public static ByteString readByteString(File file) {
         checkFile(file, "文件对象");
         try {
-            return readByteString(new FileInputStream(file));
+            return readByteString(Files.newInputStream(file.toPath()));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -172,11 +166,10 @@ public final class OkioUtils {
 
     /**
      * 读输入流并返回byteString对象
-     * 
+     *
      * @param inputStream
-     *            输入流对象
+     *         输入流对象
      * @return
-     * @author pengjianqiang@2022年6月29日
      */
     public static ByteString readByteString(InputStream inputStream) {
         checkObject(inputStream, "文件流对象");
@@ -189,12 +182,11 @@ public final class OkioUtils {
 
     /**
      * 拷贝文件到目标文件(强制覆盖)
-     * 
+     *
      * @param srcFile
-     *            源文件对象
+     *         源文件对象
      * @param destFile
-     *            目标文件对象
-     * @author pengjianqiang@2022年6月28日
+     *         目标文件对象
      */
     public static void copyFile(File srcFile, File destFile) {
         copyFile(srcFile, null, destFile, null);
@@ -202,12 +194,11 @@ public final class OkioUtils {
 
     /**
      * 拷贝文件到目标文件(强制覆盖)
-     * 
+     *
      * @param srcFilePath
-     *            源文件路径
+     *         源文件路径
      * @param descFilePath
-     *            目标文件路径
-     * @author pengjianqiang@2022年6月28日
+     *         目标文件路径
      */
     public static void copyFile(String srcFilePath, String descFilePath) {
         copyFile(null, srcFilePath, null, descFilePath);
@@ -216,16 +207,15 @@ public final class OkioUtils {
     /**
      * 拷贝文件到目标文件(强制覆盖)<br>
      * xxxFile为空时，从xxxFilePath获取文件对象<br>
-     * 
+     *
      * @param srcFile
-     *            源文件对象
+     *         源文件对象
      * @param srcFilePath
-     *            源文件路径
+     *         源文件路径
      * @param destFile
-     *            目标文件对象
+     *         目标文件对象
      * @param descFilePath
-     *            目标文件路径
-     * @author pengjianqiang@2022年6月28日
+     *         目标文件路径
      */
     public static void copyFile(File srcFile, String srcFilePath, File destFile, String descFilePath) {
         File[] files = checkSrcAndDestFile(srcFile, srcFilePath, destFile, descFilePath);
@@ -238,18 +228,17 @@ public final class OkioUtils {
 
     /**
      * 拷贝文件到输出流
-     * 
+     *
      * @param srcFile
-     *            源文件对象
+     *         源文件对象
      * @param srcFilePath
-     *            源文件路径
+     *         源文件路径
      * @param outputStream
-     *            输出流对象
-     * @author pengjianqiang@2022年6月28日
+     *         输出流对象
      */
     public static void copyFile(File srcFile, String srcFilePath, OutputStream outputStream) {
         if (CheckUtils.isNull(srcFile)) {
-            checkFilePath(srcFilePath, "源文件对象");
+            checkFilePath(srcFilePath, "源文件路径");
             srcFile = new File(srcFilePath);
         }
         checkFile(srcFile, "源文件对象");
@@ -263,12 +252,11 @@ public final class OkioUtils {
 
     /**
      * 移动文件(强制覆盖)
-     * 
+     *
      * @param srcFile
-     *            源文件对象
+     *         源文件对象
      * @param destFile
-     *            目标文件对象
-     * @author pengjianqiang@2022年6月28日
+     *         目标文件对象
      */
     public static void moveFile(File srcFile, File destFile) {
         moveFile(srcFile, null, destFile, null);
@@ -276,12 +264,11 @@ public final class OkioUtils {
 
     /**
      * 移动文件(强制覆盖)
-     * 
+     *
      * @param srcFilePath
-     *            源文件路径
+     *         源文件路径
      * @param descFilePath
-     *            目标文件路径
-     * @author pengjianqiang@2022年6月28日
+     *         目标文件路径
      */
     public static void moveFile(String srcFilePath, String descFilePath) {
         moveFile(null, srcFilePath, null, descFilePath);
@@ -290,16 +277,15 @@ public final class OkioUtils {
     /**
      * 移动文件(强制覆盖)<br>
      * xxxFile为空时，从xxxFilePath获取文件对象<br>
-     * 
+     *
      * @param srcFile
-     *            源文件对象
+     *         源文件对象
      * @param srcFilePath
-     *            源文件路径
+     *         源文件路径
      * @param destFile
-     *            目标文件对象
+     *         目标文件对象
      * @param descFilePath
-     *            目标文件路径
-     * @author pengjianqiang@2022年6月28日
+     *         目标文件路径
      */
     public static void moveFile(File srcFile, String srcFilePath, File destFile, String descFilePath) {
         File[] files = checkSrcAndDestFile(srcFile, srcFilePath, destFile, descFilePath);
@@ -312,12 +298,11 @@ public final class OkioUtils {
 
     /**
      * 拷贝流
-     * 
+     *
      * @param inputStream
-     *            输入流对象
+     *         输入流对象
      * @param outputStream
-     *            输出流对象
-     * @author pengjianqiang@2022年6月28日
+     *         输出流对象
      */
     public static void copyStream(InputStream inputStream, OutputStream outputStream) {
         checkObject(inputStream, "输入流对象");
@@ -327,12 +312,11 @@ public final class OkioUtils {
 
     /**
      * 把byteString输出到sink
-     * 
+     *
      * @param byteString
-     *            源输入对象
+     *         源输入对象
      * @param sink
-     *            目标输出对象
-     * @author pengjianqiang@2022年6月29日
+     *         目标输出对象
      */
     public static void copy(ByteString byteString, Sink sink) {
         checkObject(byteString, "源输入对象");
@@ -345,13 +329,44 @@ public final class OkioUtils {
     }
 
     /**
+     * 把byteString输出到文件
+     *
+     * @param byteString
+     *         源输入对象
+     * @param filePath
+     *         目标文件路径
+     * @return
+     */
+    public static void copy(ByteString byteString, String filePath) {
+        checkFilePath(filePath, "目标文件路径");
+        copy(byteString, new File(filePath));
+    }
+
+    /**
+     * 把byteString输出到文件
+     *
+     * @param byteString
+     *         源输入对象
+     * @param file
+     *         目标文件对象
+     */
+    public static void copy(ByteString byteString, File file) {
+        checkObject(byteString, "源输入对象");
+        checkFile(file, "目标文件对象");
+        try (BufferedSink bufferedSink = Okio.buffer(Okio.sink(file))) {
+            bufferedSink.write(byteString.asByteBuffer());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
      * 直接把source输出到sink
-     * 
+     *
      * @param source
-     *            源输入对象
+     *         源输入对象
      * @param sink
-     *            目标输出对象
-     * @author pengjianqiang@2022年6月29日
+     *         目标输出对象
      */
     public static void copy(Source source, Sink sink) {
         checkObject(source, "源输入对象");
