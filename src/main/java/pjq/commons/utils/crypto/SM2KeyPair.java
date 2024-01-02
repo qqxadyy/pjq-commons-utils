@@ -33,7 +33,7 @@ package pjq.commons.utils.crypto;
 
 import java.security.KeyPair;
 
-import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 
 /**
@@ -43,9 +43,26 @@ import lombok.Getter;
  * @date 2023-08-11
  */
 @Getter
-@AllArgsConstructor
+@Builder
 public class SM2KeyPair {
+    /**
+     * 密钥对的对象<br>
+     * 但是做加解密时应使用{@link #privateKey}、{@link #publicKey}、{@link #compressedPublicKey}
+     */
     private KeyPair keyPair;
-    private String publicKey;
+
+    /**
+     * 16进制私钥串
+     */
     private String privateKey;
+
+    /**
+     * 16进制公钥串
+     */
+    private String publicKey;
+
+    /**
+     * 压缩后的16进制公钥串
+     */
+    private String compressedPublicKey;
 }

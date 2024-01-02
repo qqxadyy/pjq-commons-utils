@@ -34,6 +34,7 @@ package pjq.commons.utils.crypto;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyPair;
 
+import cn.hutool.core.codec.Base64;
 import cn.hutool.core.util.HexUtil;
 import cn.hutool.crypto.SmUtil;
 import cn.hutool.crypto.asymmetric.KeyType;
@@ -68,8 +69,12 @@ public class SMUtils {
      */
     public static SM2KeyPair sm2GenKeyPair() {
         SM2 sm2 = SmUtil.sm2();
-        return new SM2KeyPair(new KeyPair(sm2.getPublicKey(), sm2.getPrivateKey()), sm2.getPublicKeyBase64(),
-                sm2.getPrivateKeyBase64());
+        return SM2KeyPair.builder()
+                .keyPair(new KeyPair(sm2.getPublicKey(), sm2.getPrivateKey()))
+                .privateKey(sm2.getDHex())
+                .publicKey(HexUtil.encodeHexStr(sm2.getQ(false)))
+                .compressedPublicKey(HexUtil.encodeHexStr(sm2.getQ(true)))
+                .build();
     }
 
     /**
@@ -79,26 +84,79 @@ public class SMUtils {
      *         待加密字符串
      * @param publicKey
      *         SM2公钥
-     * @return
+     * @return 16进制密文。BC库加密出的SM2密文串会以"04"开头，解密时如果不是使用BC库，则需要根据实际情况判断是否需要去掉开头的"04"部分
      */
     public static String sm2Encrypt(String data, String publicKey) {
-        checkSrcData(data, 0);
-        sm2CheckKey(publicKey, KeyType.PublicKey);
-        return SmUtil.sm2(null, publicKey).encryptBase64(data, KeyType.PublicKey);
+        return sm2Encrypt(data, publicKey, 0);
     }
 
     /**
      * SM2解密
      *
      * @param sm2EncryptedData
-     *         SM2加密字符串
+     *         16进制密文
      * @param privateKey
      *         SM2私钥
-     * @return
+     * @return 明文
      */
     public static String sm2Decrypt(String sm2EncryptedData, String privateKey) {
+        return sm2Decrypt(sm2EncryptedData, privateKey, 0);
+    }
+
+    /**
+     * SM2加密<br>
+     * 返回Base64编码的密文
+     *
+     * @param data
+     *         待加密字符串
+     * @param publicKey
+     *         SM2公钥
+     * @return Base64编码密文。BC库加密出的SM2密文串会以"04"开头，解密时如果不是使用BC库，则需要根据实际情况判断是否需要去掉开头的"04"部分<br>
+     * 可先Base64解码，再转成16进制密文，即可判断密文是否以"04"开头
+     */
+    public static String sm2EncryptToBase64(String data, String publicKey) {
+        return sm2Encrypt(data, publicKey, 1);
+    }
+
+    /**
+     * SM2解密
+     *
+     * @param sm2EncryptedData
+     *         Base64编码的密文
+     * @param privateKey
+     *         SM2私钥
+     * @return 明文
+     */
+    public static String sm2DecryptFromBase64(String sm2EncryptedData, String privateKey) {
+        return sm2Decrypt(sm2EncryptedData, privateKey, 1);
+    }
+
+    private static String sm2Encrypt(String data, String publicKey, int ciphertextEncoding) {
+        checkSrcData(data, 0);
+        publicKey = sm2CheckKey(publicKey, KeyType.PublicKey);
+        if (ciphertextEncoding == 0) {
+            //加密并返回16进制密文
+            return SmUtil.sm2(null, publicKey).encryptHex(data, KeyType.PublicKey);
+        } else {
+            //加密并返回Base64编码的密文
+            return SmUtil.sm2(null, publicKey).encryptBase64(data, KeyType.PublicKey);
+        }
+    }
+
+    private static String sm2Decrypt(String sm2EncryptedData, String privateKey, int ciphertextEncoding) {
         checkSrcData(sm2EncryptedData, 1);
         sm2CheckKey(privateKey, KeyType.PrivateKey);
+
+        if (ciphertextEncoding != 0) {
+            //如果是Base64编码的密文，则先转成16进制密文
+            sm2EncryptedData = HexUtil.encodeHexStr(Base64.decode(sm2EncryptedData));
+        }
+        if (!sm2EncryptedData.startsWith("04")) {
+            //BouncyCastle(BC库)解密时需要密文的第一位为0x04，而一些非BC库加密出的密文第一位可能不是0x04，所以需要判断是否需要补上
+            sm2EncryptedData = "04".concat(sm2EncryptedData);
+        }
+
+        //解密16进制密文
         return SmUtil.sm2(privateKey, null).decryptStr(sm2EncryptedData, KeyType.PrivateKey);
     }
 
@@ -109,7 +167,7 @@ public class SMUtils {
      *         待签名字符串
      * @param privateKey
      *         SM2私钥
-     * @return
+     * @return 16进制签名串
      */
     public static String sm2Sign(String data, String privateKey) {
         checkSrcData(data, 2);
@@ -125,12 +183,12 @@ public class SMUtils {
      * @param publicKey
      *         SM2公钥
      * @param sign
-     *         SM2签名
+     *         16进制签名串
      * @return
      */
     public static boolean sm2VerifySign(String data, String publicKey, String sign) {
         checkSrcData(data, 2);
-        sm2CheckKey(publicKey, KeyType.PublicKey);
+        publicKey = sm2CheckKey(publicKey, KeyType.PublicKey);
         if (CheckUtils.isEmpty(sign)) {
             throw new RuntimeException("SM2签名不能为空");
         }
@@ -212,7 +270,7 @@ public class SMUtils {
      *         源字符串
      * @param key
      *         密钥
-     * @return
+     * @return Base64编码的密文
      */
     public static String sm4Encrypt(String data, String key) {
         checkSrcData(data, 0);
@@ -224,10 +282,10 @@ public class SMUtils {
      * SM4解密
      *
      * @param sm4EncryptedData
-     *         SM4加密字符串
+     *         Base64编码的密文
      * @param key
      *         SM4密钥
-     * @return
+     * @return 明文
      */
     public static String sm4Decrypt(String sm4EncryptedData, String key) {
         checkSrcData(sm4EncryptedData, 1);
@@ -250,11 +308,25 @@ public class SMUtils {
      *
      * @param key
      * @param keyType
+     * @return 可能经过处理的公钥串
      */
-    private static void sm2CheckKey(String key, KeyType keyType) {
+    private static String sm2CheckKey(String key, KeyType keyType) {
         if (CheckUtils.isEmpty(key)) {
             throw new RuntimeException("SM2" + (keyType.equals(KeyType.PublicKey) ? "公钥" : "私钥") + "不能为空");
         }
+
+        if (keyType.equals(KeyType.PublicKey)) {
+            //SM2的未压缩公钥为64位，但是BouncyCastle(BC库)会在前面带一位0x04再进行处理(生成的公钥也是这样)，所以先判断是否需要补充前面一位
+            byte[] keyBytes = HexUtil.decodeHex(key);
+            int byteNum = keyBytes.length;
+            if (byteNum == 64) {
+                byte[] newKeyBytes = new byte[byteNum + 1];
+                newKeyBytes[0] = 4; //最前面补0x04
+                System.arraycopy(keyBytes, 0, newKeyBytes, 1, byteNum); //把源byte[]复制到新的byte[]中
+                return HexUtil.encodeHexStr(newKeyBytes);
+            }
+        }
+        return key;
     }
 
     /**
@@ -267,11 +339,11 @@ public class SMUtils {
         if (CheckUtils.isEmpty(key)) {
             throw new RuntimeException("SM4密钥不能为空");
         }
-        byte[] keyByte = strToBytes(key);
-        if (keyByte.length != 16 || StringUtils.containChinese(key)) {
+        byte[] keyBytes = strToBytes(key);
+        if (keyBytes.length != 16 || StringUtils.containChinese(key)) {
             //1byte=8bit。长度不符合的话会报错SM4 requires a 128 bit key
             throw new RuntimeException("SM4密钥必须为16个非中文字符组成的字符串");
         }
-        return keyByte;
+        return keyBytes;
     }
 }
