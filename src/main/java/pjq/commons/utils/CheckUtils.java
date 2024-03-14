@@ -162,7 +162,7 @@ public final class CheckUtils {
      */
     @SafeVarargs
     public static void checkNotEmpty(String str, String msg,
-                                     Function<String, ? extends RuntimeException>... exceptionFunc) {
+            Function<String, ? extends RuntimeException>... exceptionFunc) {
         if (isEmpty(str)) {
             throw exceptionGetter(exceptionFunc).apply(msg);
         }
@@ -170,7 +170,7 @@ public final class CheckUtils {
 
     @SafeVarargs
     public static void checkNotNull(Object obj, String msg,
-                                    Function<String, ? extends RuntimeException>... exceptionFunc) {
+            Function<String, ? extends RuntimeException>... exceptionFunc) {
         if (isNull(obj)) {
             throw exceptionGetter(exceptionFunc).apply(msg);
         }
@@ -178,7 +178,7 @@ public final class CheckUtils {
 
     @SafeVarargs
     public static void checkNotEmpty(Collection<?> collection, String msg,
-                                     Function<String, ? extends RuntimeException>... exceptionFunc) {
+            Function<String, ? extends RuntimeException>... exceptionFunc) {
         if (isEmpty(collection)) {
             throw exceptionGetter(exceptionFunc).apply(msg);
         }
@@ -186,7 +186,7 @@ public final class CheckUtils {
 
     @SafeVarargs
     public static void checkNotEmpty(Map<?, ?> map, String msg,
-                                     Function<String, ? extends RuntimeException>... exceptionFunc) {
+            Function<String, ? extends RuntimeException>... exceptionFunc) {
         if (isEmpty(map)) {
             throw exceptionGetter(exceptionFunc).apply(msg);
         }
@@ -194,7 +194,7 @@ public final class CheckUtils {
 
     @SafeVarargs
     public static void checkNotEmpty(Object[] array, String msg,
-                                     Function<String, ? extends RuntimeException>... exceptionFunc) {
+            Function<String, ? extends RuntimeException>... exceptionFunc) {
         if (isEmpty(array)) {
             throw exceptionGetter(exceptionFunc).apply(msg);
         }
@@ -202,7 +202,7 @@ public final class CheckUtils {
 
     @SafeVarargs
     public static void checkNotFalse(boolean boolVal, String msg,
-                                     Function<String, ? extends RuntimeException>... exceptionFunc) {
+            Function<String, ? extends RuntimeException>... exceptionFunc) {
         if (!boolVal) {
             throw exceptionGetter(exceptionFunc).apply(msg);
         }
@@ -210,7 +210,7 @@ public final class CheckUtils {
 
     @SafeVarargs
     public static void checkNotTrue(boolean boolVal, String msg,
-                                    Function<String, ? extends RuntimeException>... exceptionFunc) {
+            Function<String, ? extends RuntimeException>... exceptionFunc) {
         if (boolVal) {
             throw exceptionGetter(exceptionFunc).apply(msg);
         }
