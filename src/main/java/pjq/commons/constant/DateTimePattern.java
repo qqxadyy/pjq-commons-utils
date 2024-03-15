@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023 pengjianqiang
+ * Copyright © 2024 pengjianqiang
  * All rights reserved.
  * 项目名称：pjq-commons-utils
  * 项目描述：个人整理的工具类
@@ -9,7 +9,7 @@
  * ======================================================================
  *
  * The MIT License
- * Copyright © 2023 pengjianqiang
+ * Copyright © 2024 pengjianqiang
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
