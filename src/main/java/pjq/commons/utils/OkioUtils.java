@@ -83,7 +83,11 @@ public final class OkioUtils {
         checkFile(srcFile, "源文件对象");
         checkFile(destFile, "目标文件对象");
 
-        destFile.getParentFile().mkdirs(); //保证目标文件的路径存在
+        //保证目标文件的路径存在
+        File parentFile = destFile.getParentFile();
+        if (null != parentFile && !parentFile.exists()) {
+            parentFile.mkdirs();
+        }
 
         return new File[]{ srcFile, destFile };
     }

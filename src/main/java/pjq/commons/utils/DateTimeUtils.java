@@ -264,7 +264,7 @@ public final class DateTimeUtils {
         } else if (LocalTime.class.isAssignableFrom(dateClass)) {
             return (R) LocalTime.parse(dateStr, formatter);
         } else {
-            throw new RuntimeException("不支持类".concat(dateClass.getClass().getName()).concat("的日期时间转换"));
+            throw new RuntimeException("不支持类".concat(dateClass.getName()).concat("的日期时间转换"));
         }
     }
 
@@ -293,7 +293,7 @@ public final class DateTimeUtils {
         } else if (LocalTime.class.isAssignableFrom(dateClass)) {
             return (R) LocalTime.parse(dateStr, formatter);
         } else {
-            throw new RuntimeException("不支持类".concat(dateClass.getClass().getName()).concat("的日期时间转换"));
+            throw new RuntimeException("不支持类".concat(dateClass.getName()).concat("的日期时间转换"));
         }
     }
 
