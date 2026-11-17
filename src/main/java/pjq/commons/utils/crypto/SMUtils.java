@@ -33,7 +33,17 @@ package pjq.commons.utils.crypto;
 
 import java.nio.charset.StandardCharsets;
 import java.security.KeyPair;
+import java.security.SecureRandom;
+import java.util.Arrays;
+import java.util.concurrent.atomic.AtomicLong;
 
+import org.bouncycastle.crypto.InvalidCipherTextException;
+import org.bouncycastle.crypto.engines.SM4Engine;
+import org.bouncycastle.crypto.modes.GCMBlockCipher;
+import org.bouncycastle.crypto.modes.SICBlockCipher;
+import org.bouncycastle.crypto.params.AEADParameters;
+import org.bouncycastle.crypto.params.KeyParameter;
+import org.bouncycastle.crypto.params.ParametersWithIV;
 import cn.hutool.core.codec.Base64;
 import cn.hutool.core.util.HexUtil;
 import cn.hutool.crypto.SmUtil;
@@ -49,7 +59,7 @@ import pjq.commons.utils.StringUtils;
  * <ul>
  *     <li>SM2：非对称加密算法(分组加密)，使用场景参考RSA</li>
  *     <li>SM3：密码杂凑算法，使用场景参考MD5/SHA-1/SHA-2</li>
- *     <li>SM4：对称加密算法，使用场景参考DES/AES</li>
+ *     <li>SM4：对称加密算法，使用场景参考DES/AES；默认使用带完整性校验的GCM模式，另提供CTR模式</li>
  * </ul>
  * 加解密和签名验签大致区别：<br>
  * <ul>
@@ -62,6 +72,60 @@ import pjq.commons.utils.StringUtils;
  * @see SmUtil
  */
 public class SMUtils {
+    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
+
+    /**
+     * SM4-GCM模式的IV长度(字节)
+     */
+    private static final int SM4_GCM_IV_LENGTH = 12;
+
+    /**
+     * SM4-GCM模式的tag长度(bit)
+     */
+    private static final int SM4_GCM_TAG_LENGTH_BITS = 128;
+
+    /**
+     * SM4-GCM模式的IV中实例前缀长度(字节)
+     */
+    private static final int SM4_GCM_IV_PREFIX_LENGTH = 6;
+
+    /**
+     * SM4-GCM模式IV的48位计数器掩码
+     */
+    private static final long SM4_GCM_COUNTER_MASK = 0xFFFFFFFFFFFFL;
+
+    /**
+     * SM4-CTR模式的IV长度(字节)
+     */
+    private static final int SM4_CTR_IV_LENGTH = 16;
+
+    /**
+     * SM4-CTR模式的IV中实例前缀长度(字节)
+     */
+    private static final int SM4_CTR_IV_PREFIX_LENGTH = 8;
+
+    /**
+     * 当前JVM实例的GCM-IV随机前缀，用于多节点部署时区分不同实例<br>
+     * 同一实例内通过自增计数器保证IV不重复，不同实例间依靠随机前缀区分
+     */
+    private static final byte[] SM4_GCM_IV_PREFIX = randomBytes(SM4_GCM_IV_PREFIX_LENGTH);
+
+    /**
+     * 当前JVM实例的CTR-IV随机前缀，作用同GCM-IV前缀
+     */
+    private static final byte[] SM4_CTR_IV_PREFIX = randomBytes(SM4_CTR_IV_PREFIX_LENGTH);
+
+    /**
+     * GCM-IV的48位自增计数器，初值随机，避免应用重启后计数区间与旧进程重叠
+     */
+    private static final AtomicLong SM4_GCM_IV_COUNTER = new AtomicLong(
+            SECURE_RANDOM.nextLong() & SM4_GCM_COUNTER_MASK);
+
+    /**
+     * CTR-IV的64位自增计数器，初值随机，作用同GCM-IV计数器
+     */
+    private static final AtomicLong SM4_CTR_IV_COUNTER = new AtomicLong(SECURE_RANDOM.nextLong());
+
     /**
      * 生成SM2加密算法的公私钥对
      *
@@ -172,7 +236,7 @@ public class SMUtils {
     public static String sm2Sign(String data, String privateKey) {
         checkSrcData(data, 2);
         sm2CheckKey(privateKey, KeyType.PrivateKey);
-        return SmUtil.sm2(privateKey, null).signHex(HexUtil.encodeHexStr(data));
+        return SmUtil.sm2(privateKey, null).signHexFromHex(HexUtil.encodeHexStr(data));
     }
 
     /**
@@ -264,33 +328,230 @@ public class SMUtils {
     }
 
     /**
-     * SM4加密
+     * SM4加密(使用GCM模式，带完整性校验，推荐使用)<br>
+     * 密文格式：Base64(IV(12字节) + 密文 + tag(16字节))<br>
+     * 每次加密都会重新生成IV，所以相同明文的密文每次都不同；IV由“实例随机前缀 + 自增计数器”组成，
+     * 多节点部署时也可尽量避免IV重复
      *
      * @param data
      *         源字符串
      * @param key
-     *         密钥
+     *         16个非中文字符组成的密钥
      * @return Base64编码的密文
      */
     public static String sm4Encrypt(String data, String key) {
         checkSrcData(data, 0);
         byte[] keyByte = sm4CheckKey(key);
-        return SmUtil.sm4(keyByte).encryptBase64(data);
+        byte[] plainBytes = strToBytes(data);
+        byte[] iv = nextGcmIv();
+
+        //使用BouncyCastle原生API实现SM4-GCM，tag长度为128bit
+        GCMBlockCipher cipher = new GCMBlockCipher(new SM4Engine());
+        cipher.init(true, new AEADParameters(new KeyParameter(keyByte), SM4_GCM_TAG_LENGTH_BITS, iv));
+        byte[] cipherBytes = new byte[cipher.getOutputSize(plainBytes.length)];
+        int len = cipher.processBytes(plainBytes, 0, plainBytes.length, cipherBytes, 0);
+        try {
+            len += cipher.doFinal(cipherBytes, len);
+        } catch (InvalidCipherTextException e) {
+            //加密过程正常不会出现该异常，兜底处理
+            throw new RuntimeException("SM4加密失败", e);
+        }
+
+        //密文 = IV + 密文 + tag
+        byte[] result = new byte[iv.length + len];
+        System.arraycopy(iv, 0, result, 0, iv.length);
+        System.arraycopy(cipherBytes, 0, result, iv.length, len);
+        return Base64.encode(result);
     }
 
     /**
-     * SM4解密
+     * SM4解密(GCM模式)<br>
+     * 密文格式：Base64(IV(12字节) + 密文 + tag(16字节))
      *
      * @param sm4EncryptedData
      *         Base64编码的密文
      * @param key
-     *         SM4密钥
+     *         16个非中文字符组成的密钥
      * @return 明文
      */
     public static String sm4Decrypt(String sm4EncryptedData, String key) {
         checkSrcData(sm4EncryptedData, 1);
         byte[] keyByte = sm4CheckKey(key);
-        return SmUtil.sm4(keyByte).decryptStr(sm4EncryptedData);
+        byte[] allBytes = Base64.decode(sm4EncryptedData);
+        int minLength = SM4_GCM_IV_LENGTH + SM4_GCM_TAG_LENGTH_BITS / 8;
+        if (allBytes.length <= minLength) {
+            throw new RuntimeException("SM4密文长度不足，解密失败");
+        }
+
+        byte[] iv = Arrays.copyOfRange(allBytes, 0, SM4_GCM_IV_LENGTH);
+        int cipherLength = allBytes.length - SM4_GCM_IV_LENGTH;
+        GCMBlockCipher cipher = new GCMBlockCipher(new SM4Engine());
+        cipher.init(false, new AEADParameters(new KeyParameter(keyByte), SM4_GCM_TAG_LENGTH_BITS, iv));
+        byte[] plainBytes = new byte[cipher.getOutputSize(cipherLength)];
+        int len = cipher.processBytes(allBytes, SM4_GCM_IV_LENGTH, cipherLength, plainBytes, 0);
+        try {
+            len += cipher.doFinal(plainBytes, len);
+        } catch (InvalidCipherTextException e) {
+            //GCM会在doFinal时校验tag，密文被篡改或密钥错误都会进入该分支
+            throw new RuntimeException("SM4解密失败，密文可能已损坏或密钥不正确", e);
+        }
+        return new String(plainBytes, 0, len, StandardCharsets.UTF_8);
+    }
+
+    /**
+     * SM4加密(使用CTR模式，无完整性校验，只适用于不需要防篡改的场景)<br>
+     * 密文格式：Base64(IV(16字节) + 密文)<br>
+     * 每次加密都会重新生成IV，所以相同明文的密文每次都不同；IV由“实例随机前缀 + 自增计数器”组成，
+     * 多节点部署时也可尽量避免IV重复
+     *
+     * @param data
+     *         源字符串
+     * @param key
+     *         16个非中文字符组成的密钥
+     * @return Base64编码的密文
+     */
+    public static String sm4EncryptByCTR(String data, String key) {
+        checkSrcData(data, 0);
+        return sm4ByCTR(data, sm4CheckKey(key), true);
+    }
+
+    /**
+     * SM4解密(CTR模式)<br>
+     * 密文格式：Base64(IV(16字节) + 密文)
+     *
+     * @param sm4EncryptedData
+     *         Base64编码的密文
+     * @param key
+     *         16个非中文字符组成的密钥
+     * @return 明文
+     */
+    public static String sm4DecryptByCTR(String sm4EncryptedData, String key) {
+        checkSrcData(sm4EncryptedData, 1);
+        return sm4ByCTR(sm4EncryptedData, sm4CheckKey(key), false);
+    }
+
+    /**
+     * CTR模式的加解密处理(CTR加解密逻辑相同，仅init的加密标识不同)
+     *
+     * @param data
+     *         源字符串或Base64编码的密文
+     * @param keyByte
+     *         密钥字节数组
+     * @param encrypt
+     *         是否加密
+     * @return Base64编码的密文或明文
+     */
+    private static String sm4ByCTR(String data, byte[] keyByte, boolean encrypt) {
+        byte[] srcBytes;
+        byte[] iv;
+        if (encrypt) {
+            iv = nextCtrIv();
+            srcBytes = strToBytes(data);
+        } else {
+            byte[] allBytes = Base64.decode(data);
+            if (allBytes.length <= SM4_CTR_IV_LENGTH) {
+                throw new RuntimeException("SM4密文长度不足，解密失败");
+            }
+            iv = Arrays.copyOfRange(allBytes, 0, SM4_CTR_IV_LENGTH);
+            srcBytes = Arrays.copyOfRange(allBytes, SM4_CTR_IV_LENGTH, allBytes.length);
+        }
+
+        //使用BouncyCastle原生API实现SM4-CTR(CTR为流式加密，输出长度与输入长度一致)
+        SICBlockCipher cipher = new SICBlockCipher(new SM4Engine());
+        cipher.init(encrypt, new ParametersWithIV(new KeyParameter(keyByte), iv));
+        byte[] outBytes = new byte[srcBytes.length];
+        int len = cipher.processBytes(srcBytes, 0, srcBytes.length, outBytes, 0);
+
+        if (encrypt) {
+            //加密时把IV拼在密文前面
+            byte[] result = new byte[iv.length + len];
+            System.arraycopy(iv, 0, result, 0, iv.length);
+            System.arraycopy(outBytes, 0, result, iv.length, len);
+            return Base64.encode(result);
+        } else {
+            return new String(outBytes, 0, len, StandardCharsets.UTF_8);
+        }
+    }
+
+    /**
+     * 生成GCM模式使用的IV<br>
+     * IV = 6字节实例随机前缀 + 6字节自增计数器，同一实例内严格不重复，多实例间依靠随机前缀区分
+     *
+     * @return 12字节IV
+     */
+    private static byte[] nextGcmIv() {
+        return nextIv(SM4_GCM_IV_PREFIX, SM4_GCM_IV_PREFIX_LENGTH, SM4_GCM_IV_LENGTH, SM4_GCM_IV_COUNTER,
+                SM4_GCM_COUNTER_MASK);
+    }
+
+    /**
+     * 生成CTR模式使用的IV<br>
+     * IV = 8字节实例随机前缀 + 8字节自增计数器，同一实例内严格不重复，多实例间依靠随机前缀区分
+     *
+     * @return 16字节IV
+     */
+    private static byte[] nextCtrIv() {
+        return nextIv(SM4_CTR_IV_PREFIX, SM4_CTR_IV_PREFIX_LENGTH, SM4_CTR_IV_LENGTH, SM4_CTR_IV_COUNTER,
+                -1L); // CTR 不需要掩码
+    }
+
+    /**
+     * 生成带前缀的IV<br>
+     * IV = 随机前缀 + 自增计数器，同一实例内严格不重复，多实例间依靠随机前缀区分
+     *
+     * @param prefix
+     *         随机前缀（实例级）
+     * @param prefixLength
+     *         随机前缀长度
+     * @param ivLength
+     *         IV总长度
+     * @param counter
+     *         自增计数器（AtomicLong）
+     * @param counterMask
+     *         计数器掩码（用于截断，如无掩码可传 -1L 表示不截断）
+     * @return 指定长度的IV
+     */
+    private static byte[] nextIv(byte[] prefix, int prefixLength, int ivLength, AtomicLong counter, long counterMask) {
+        byte[] iv = new byte[ivLength];
+        System.arraycopy(prefix, 0, iv, 0, prefixLength);
+        long counterValue = counter.incrementAndGet();
+        if (counterMask != -1L) {
+            counterValue &= counterMask;
+        }
+        putLong(iv, prefixLength, ivLength - prefixLength, counterValue);
+        return iv;
+    }
+
+    /**
+     * 按大端方式把long值写入byte数组的指定位置
+     *
+     * @param target
+     *         目标数组
+     * @param offset
+     *         起始位置
+     * @param length
+     *         占用字节数
+     * @param value
+     *         待写入的值
+     */
+    private static void putLong(byte[] target, int offset, int length, long value) {
+        for (int i = length - 1; i >= 0; i--) {
+            target[offset + i] = (byte) (value & 0xFF);
+            value >>>= 8;
+        }
+    }
+
+    /**
+     * 生成指定长度的安全随机字节数组
+     *
+     * @param length
+     *         长度
+     * @return
+     */
+    private static byte[] randomBytes(int length) {
+        byte[] bytes = new byte[length];
+        SECURE_RANDOM.nextBytes(bytes);
+        return bytes;
     }
 
     private static byte[] strToBytes(String str) {

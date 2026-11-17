@@ -5,14 +5,14 @@
 	<parent>
 		<groupId>com.github.qqxadyy</groupId>
 		<artifactId>pjq-parent</artifactId>
-		<version>1.5.0</version>
+		<version>1.5.1-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>pjq-commons-utils</artifactId>
 	<version>1.5.1-SNAPSHOT</version>
 	<name>pjq-commons-utils</name>
 	<description>个人整理的工具类</description>
-	<inceptionYear>2024</inceptionYear>
+	<inceptionYear>2027</inceptionYear>
 	<url>https://github.com/qqxadyy/pjq-commons-utils</url>
 	<licenses>
 		<license>
