@@ -91,10 +91,12 @@ public final class DateTimeUtils {
      * @return
      */
     public static LocalDate localDateTimeToLocalDate(LocalDateTime dateTime) {
+        CheckUtils.checkNotNull(dateTime, "日期参数不能为空");
         return dateTime.toLocalDate();
     }
 
     private static Date temporalAccessorToDate(TemporalAccessor temporal) {
+        CheckUtils.checkNotNull(temporal, "日期参数不能为空");
         Class<?> clazz = temporal.getClass();
         if (LocalDate.class.isAssignableFrom(clazz)) {
             return Date.from(((LocalDate) temporal).atStartOfDay(defaultZone).toInstant());
@@ -126,7 +128,7 @@ public final class DateTimeUtils {
     }
 
     private static TemporalAccessor dateToTemporalAccessor(Date date, Class<? extends TemporalAccessor> clazz) {
-        CheckUtils.checkNotNull(date, "需要转换的日期对象不能为空");
+        CheckUtils.checkNotNull(date, "日期参数不能为空");
         if (LocalDate.class.isAssignableFrom(clazz)) {
             return LocalDateTime.ofInstant(date.toInstant(), defaultZone).toLocalDate();
         } else if (LocalDateTime.class.isAssignableFrom(clazz)) {
@@ -154,6 +156,7 @@ public final class DateTimeUtils {
      * @return
      */
     public static Date parseDate(String dateStr, DateTimePattern pattern) {
+        CheckUtils.checkNotNull(pattern, "日期格式不能为空");
         return parseDate(dateStr, pattern.value());
     }
 
@@ -165,6 +168,8 @@ public final class DateTimeUtils {
      * @return
      */
     public static Date parseDate(String dateStr, String pattern) {
+        CheckUtils.checkNotEmpty(dateStr, "日期参数不能为空");
+
         DateTimeFormatter formatter = ofPattern(pattern);
         return temporalAccessorToDate(DateTimePattern.isDatePattern(pattern) ? LocalDate.parse(dateStr, formatter)
                 : LocalDateTime.parse(dateStr, formatter));
@@ -188,6 +193,7 @@ public final class DateTimeUtils {
      * @return
      */
     public static LocalDate parseLocalDate(String dateStr, DateTimePattern pattern) {
+        CheckUtils.checkNotNull(pattern, "日期格式不能为空");
         return parseLocalDate(dateStr, pattern.value());
     }
 
@@ -199,6 +205,8 @@ public final class DateTimeUtils {
      * @return
      */
     public static LocalDate parseLocalDate(String dateStr, String pattern) {
+        CheckUtils.checkNotEmpty(dateStr, "日期参数不能为空");
+
         DateTimeFormatter formatter = ofPattern(pattern);
         return DateTimePattern.isDatePattern(pattern) ? LocalDate.parse(dateStr, formatter)
                 : LocalDateTime.parse(dateStr, formatter).toLocalDate();
@@ -222,6 +230,7 @@ public final class DateTimeUtils {
      * @return
      */
     public static LocalDateTime parseLocalDateTime(String dateStr, DateTimePattern pattern) {
+        CheckUtils.checkNotNull(pattern, "日期格式不能为空");
         return parseLocalDateTime(dateStr, pattern.value());
     }
 
@@ -233,6 +242,8 @@ public final class DateTimeUtils {
      * @return
      */
     public static LocalDateTime parseLocalDateTime(String dateStr, String pattern) {
+        CheckUtils.checkNotEmpty(dateStr, "日期参数不能为空");
+
         DateTimeFormatter formatter = ofPattern(pattern);
         LocalDateTime isoDateTime = parseISOLocalDateTime(dateStr);
         return Optional.ofNullable(isoDateTime).orElseGet(() -> LocalDateTime.parse(dateStr, formatter));
@@ -250,6 +261,8 @@ public final class DateTimeUtils {
      */
     @SuppressWarnings("unchecked")
     public static <R> R commonParse(String dateStr, String pattern, Class<R> dateClass) {
+        CheckUtils.checkNotEmpty(dateStr, "日期参数不能为空");
+
         DateTimeFormatter formatter = ofPattern(pattern);
         if (Date.class.isAssignableFrom(dateClass)) {
             try {
@@ -280,6 +293,9 @@ public final class DateTimeUtils {
      */
     @SuppressWarnings("unchecked")
     public static <R> R commonParse(String dateStr, DateTimeFormatter formatter, Class<R> dateClass) {
+        CheckUtils.checkNotEmpty(dateStr, "日期参数不能为空");
+        CheckUtils.checkNotNull(formatter, "日期格式不能为空");
+
         if (Date.class.isAssignableFrom(dateClass)) {
             try {
                 return (R) localDateTimeToDate(LocalDateTime.parse(dateStr, formatter));
@@ -339,6 +355,7 @@ public final class DateTimeUtils {
      * @return
      */
     public static String format(Date date, DateTimePattern pattern) {
+        CheckUtils.checkNotNull(pattern, "日期格式不能为空");
         return format(date, pattern.value());
     }
 
@@ -350,6 +367,7 @@ public final class DateTimeUtils {
      * @return
      */
     public static String format(Date date, String pattern) {
+        CheckUtils.checkNotEmpty(pattern, "日期格式不能为空");
         return java8TimeCommonFormat(dateToTemporalAccessor(date,
                 DateTimePattern.isDatePattern(pattern) ? LocalDate.class : LocalDateTime.class), pattern);
     }
@@ -382,6 +400,7 @@ public final class DateTimeUtils {
      * @return
      */
     public static String format(LocalDate date, DateTimePattern pattern) {
+        CheckUtils.checkNotNull(pattern, "日期格式不能为空");
         return format(date, pattern.value());
     }
 
@@ -404,6 +423,7 @@ public final class DateTimeUtils {
      * @return
      */
     public static String format(LocalDateTime dateTime, DateTimePattern pattern) {
+        CheckUtils.checkNotNull(pattern, "日期格式不能为空");
         return format(dateTime, pattern.value());
     }
 
@@ -415,6 +435,8 @@ public final class DateTimeUtils {
      * @return
      */
     public static String format(LocalDateTime dateTime, String pattern) {
+        CheckUtils.checkNotNull(dateTime, "日期参数不能为空");
+        CheckUtils.checkNotEmpty(pattern, "日期格式不能为空");
         return java8TimeCommonFormat(DateTimePattern.isDatePattern(pattern) ? dateTime.toLocalDate() : dateTime,
                 pattern);
     }
@@ -429,6 +451,9 @@ public final class DateTimeUtils {
      * @return
      */
     public static <T> String commonFormat(T date, String pattern) {
+        CheckUtils.checkNotNull(date, "日期参数不能为空");
+        CheckUtils.checkNotEmpty(pattern, "日期格式不能为空");
+
         if (date instanceof Date) {
             return java8TimeCommonFormat(dateToLocalDateTime(Date.class.cast(date)), pattern);
         } else if (date instanceof TemporalAccessor) {
@@ -443,10 +468,12 @@ public final class DateTimeUtils {
     }
 
     private static DateTimeFormatter ofPattern(String pattern) {
+        CheckUtils.checkNotEmpty(pattern, "日期格式不能为空");
         return DateTimeFormatter.ofPattern(pattern);
     }
 
     private static LocalDateTime localDateToDateTime(LocalDate date) {
+        CheckUtils.checkNotNull(date, "日期参数不能为空");
         return date.atTime(0, 0, 0, 0);
     }
 
@@ -570,6 +597,7 @@ public final class DateTimeUtils {
      * @return
      */
     public static int durationDays(LocalDateTime d1, LocalDateTime d2) {
+        CheckUtils.checkNotFalse(null != d1 && null != d2, "日期参数不能为空");
         return durationDays(d1.toLocalDate(), d2.toLocalDate());
     }
 
@@ -582,6 +610,9 @@ public final class DateTimeUtils {
      * @return
      */
     public static int durationDays(LocalDate d1, LocalDate d2) {
+        CheckUtils.checkNotFalse(null != d1 && null != d2, "日期参数不能为空");
+        CheckUtils.checkNotTrue(d1.isAfter(d2), "开始日期不能大于结束日期"); //计算经过天数时开始日期必须小于或等于结束日期
+
         return diff(d1, d2, ChronoUnit.DAYS) + 1;
     }
 
@@ -604,6 +635,7 @@ public final class DateTimeUtils {
      * @return
      */
     public static int diffDays(LocalDateTime d1, LocalDateTime d2) {
+        CheckUtils.checkNotFalse(null != d1 && null != d2, "日期参数不能为空");
         return diffDays(d1.toLocalDate(), d2.toLocalDate());
     }
 
@@ -629,6 +661,7 @@ public final class DateTimeUtils {
      * @return
      */
     public static int diff(LocalDate d1, LocalDate d2, ChronoUnit unit) {
+        CheckUtils.checkNotFalse(null != d1 && null != d2, "日期参数不能为空");
         CheckUtils.checkNotNull(unit, "单位不能为空");
 
         boolean unitValid = true;
@@ -817,6 +850,7 @@ public final class DateTimeUtils {
     }
 
     private static <T, R> R getDayStartOrEnd(T date, Class<R> dateClass, String methodName) {
+        CheckUtils.checkNotNull(date, "日期参数不能为空");
         try {
             String dateStr = (String) MethodUtils.invokeStaticOrDefault(DateTimeUtils.class,
                     DateTimeUtils.class.getMethod(methodName, date.getClass()), date);
@@ -866,6 +900,7 @@ public final class DateTimeUtils {
      * @return
      */
     public static LocalDateTime plus(LocalDateTime dateTime, long amountToAdd, ChronoUnit unit) {
+        CheckUtils.checkNotNull(dateTime, "日期参数不能为空");
         CheckUtils.checkNotNull(unit, "单位不能为空");
 
         dateTime = dateTime.withNano(0);
@@ -915,6 +950,7 @@ public final class DateTimeUtils {
      */
     public static LocalDateTime firstDayOfMonth(LocalDateTime dateTime) {
         // 当前日期-(当前日期的天)+(1天)，再带上日期开始的时分秒信息
+        CheckUtils.checkNotNull(dateTime, "日期参数不能为空");
         return plus(dateTime, -1 * dateTime.getDayOfMonth() + 1, ChronoUnit.DAYS)
                 .with(LocalTime.parse(startTime, ofPattern(" HH:mm:ss")));
     }
@@ -947,6 +983,7 @@ public final class DateTimeUtils {
      */
     public static LocalDateTime lastDayOfMonth(LocalDateTime dateTime) {
         // 当前日期+(1月)-(当前日期的天)，再带上日期结束的时分秒信息
+        CheckUtils.checkNotNull(dateTime, "日期参数不能为空");
         return plus(plus(dateTime, 1, ChronoUnit.MONTHS), -1 * dateTime.getDayOfMonth(), ChronoUnit.DAYS)
                 .with(LocalTime.parse(endTime, ofPattern(" HH:mm:ss")));
     }
@@ -958,6 +995,7 @@ public final class DateTimeUtils {
      * @return
      */
     public static long getUTCSeconds(LocalDateTime dateTime) {
+        CheckUtils.checkNotNull(dateTime, "日期参数不能为空");
         return dateTime.toEpochSecond(ZoneOffset.UTC);
     }
 
@@ -968,6 +1006,7 @@ public final class DateTimeUtils {
      * @return
      */
     public static long getUTCMillSeconds(LocalDateTime dateTime) {
+        CheckUtils.checkNotNull(dateTime, "日期参数不能为空");
         return dateTime.toInstant(ZoneOffset.UTC).toEpochMilli();
     }
 
