@@ -550,7 +550,8 @@ public final class DateTimeUtils {
     }
 
     /**
-     * 获取两个时间相差的天数
+     * 获取两个时间经过的天数<br>
+     * 即要包含开始日期，需+1
      *
      * @param d1
      * @param d2
@@ -561,7 +562,8 @@ public final class DateTimeUtils {
     }
 
     /**
-     * 获取两个时间相差的天数
+     * 获取两个时间经过的天数<br>
+     * 即要包含开始日期，需+1
      *
      * @param d1
      * @param d2
@@ -572,14 +574,48 @@ public final class DateTimeUtils {
     }
 
     /**
-     * 获取两个日期相差的天数
+     * 获取两个日期经过的天数<br>
+     * 即要包含开始日期，需+1
      *
      * @param d1
      * @param d2
      * @return
      */
     public static int durationDays(LocalDate d1, LocalDate d2) {
-        return duration(d1, d2, ChronoUnit.DAYS);
+        return diff(d1, d2, ChronoUnit.DAYS) + 1;
+    }
+
+    /**
+     * 获取两个时间相差的天数
+     *
+     * @param d1
+     * @param d2
+     * @return
+     */
+    public static int diffDays(Date d1, Date d2) {
+        return diffDays(dateToLocalDate(d1), dateToLocalDate(d2));
+    }
+
+    /**
+     * 获取两个时间相差的天数
+     *
+     * @param d1
+     * @param d2
+     * @return
+     */
+    public static int diffDays(LocalDateTime d1, LocalDateTime d2) {
+        return diffDays(d1.toLocalDate(), d2.toLocalDate());
+    }
+
+    /**
+     * 获取两个日期相差的天数
+     *
+     * @param d1
+     * @param d2
+     * @return
+     */
+    public static int diffDays(LocalDate d1, LocalDate d2) {
+        return diff(d1, d2, ChronoUnit.DAYS);
     }
 
     /**
@@ -592,7 +628,7 @@ public final class DateTimeUtils {
      *         只支持年(YEARS)、月(MONTHS)、日(DAYS)
      * @return
      */
-    public static int duration(LocalDate d1, LocalDate d2, ChronoUnit unit) {
+    public static int diff(LocalDate d1, LocalDate d2, ChronoUnit unit) {
         CheckUtils.checkNotNull(unit, "单位不能为空");
 
         boolean unitValid = true;
@@ -620,10 +656,10 @@ public final class DateTimeUtils {
      * @return
      * @author pengjianqiang@2022年7月3日
      */
-    public static String durationYearMonthDay(LocalDate d1, LocalDate d2) {
+    public static String diffYearMonthDay(LocalDate d1, LocalDate d2) {
         int daysOfOneYear = 365;
         int daysOfOneMonth = 30; // 大约取1个月30天
-        int totalDurationDays = durationDays(d1, d2);
+        int totalDurationDays = diffDays(d1, d2);
 
         int durationYears = 0;
         int durationMonths = 0;
@@ -672,8 +708,8 @@ public final class DateTimeUtils {
      * @param d2
      * @return
      */
-    public static long durationSeconds(Date d1, Date d2) {
-        return durationSeconds(dateToLocalDateTime(d1), dateToLocalDateTime(d2));
+    public static long diffSeconds(Date d1, Date d2) {
+        return diffSeconds(dateToLocalDateTime(d1), dateToLocalDateTime(d2));
     }
 
     /**
@@ -683,8 +719,8 @@ public final class DateTimeUtils {
      * @param d2
      * @return
      */
-    public static long durationSeconds(LocalDate d1, LocalDate d2) {
-        return durationSeconds(localDateToDateTime(d1), localDateToDateTime(d2));
+    public static long diffSeconds(LocalDate d1, LocalDate d2) {
+        return diffSeconds(localDateToDateTime(d1), localDateToDateTime(d2));
     }
 
     /**
@@ -694,7 +730,7 @@ public final class DateTimeUtils {
      * @param d2
      * @return
      */
-    public static long durationSeconds(LocalDateTime d1, LocalDateTime d2) {
+    public static long diffSeconds(LocalDateTime d1, LocalDateTime d2) {
         return Math.abs(Duration.between(d1, d2).getSeconds());
     }
 
